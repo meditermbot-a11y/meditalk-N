@@ -3,308 +3,443 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0F6B74">
+<meta name="theme-color" content="#0E7C86">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>MediTalk-N 인수인계 연습</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gothic+A1:wght@400;500;700;800&family=Share+Tech+Mono&display=swap">
 <style>
-/* Layout: phone-first single column. Chat fills the screen, with the mic bar fixed at the thumb. Chart and glossary slide up as sheets. */
+/* Layout: phone app shell. Home / Chart / Model / Terms tabs on a bottom nav; practice runs full-screen with the mic at the thumb.
+   One bold place: the bedside-monitor card (dark, neon vitals). Everything else stays calm and soft. */
 :root{
-  --bg:#F3F6F7; --surface:#FFFFFF; --surface-2:#E9EEF0; --line:#CFD8DC;
-  --fg:#16252B; --muted:#56676E;
-  --accent:#0F6B74; --accent-fg:#FFFFFF; --accent-soft:#D9ECEE;
-  --me:#12343B; --me-fg:#F2F7F8;
-  --rec:#B42318; --rec-soft:#FDE4E1;
-  --warn:#8A5A00; --warn-soft:#FBEFD2;
-  --ok:#1E6B45; --ok-soft:#DDF0E5; --miss:#9B2C2C; --miss-soft:#F8E1E1;
-  --font-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
-  --font-data:"IBM Plex Mono","D2Coding",ui-monospace,Menlo,monospace;
+  --bg:#EEF4F6; --card:#FFFFFF; --soft:#E3EEF1; --line:#D3E0E4;
+  --ink:#10242B; --sub:#5A6E75;
+  --brand:#0E8C8C; --brand-2:#14B8A6; --brand-ink:#FFFFFF; --brand-soft:#D5F1EE;
+  --coral:#FF6B57; --coral-soft:#FFE3DE; --sun:#FFC94D; --sun-soft:#FFF3D1;
+  --ok:#119A5B; --ok-soft:#DAF4E6; --miss:#D2453A; --miss-soft:#FDE2DF;
+  --mon:#0B1622; --mon-2:#132233; --mon-line:#22364A; --mon-dim:#7E93A8;
+  --hr:#3BE28C; --sp:#4FD6FF; --bp:#FF7A7A; --rr:#FFD24D; --bt:#E6EEF5; --nrs:#FFA24D;
+  --shadow:0 6px 20px rgba(16,36,43,.08);
+  --f-disp:"Jua","Gothic A1","Apple SD Gothic Neo",sans-serif;
+  --f-body:"Gothic A1","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --f-mon:"Share Tech Mono",ui-monospace,Menlo,monospace;
   color-scheme:light;
 }
 @media (prefers-color-scheme: dark){
   :root{
-    --bg:#0F1A1E; --surface:#16252B; --surface-2:#1E3138; --line:#2E454D;
-    --fg:#E6EEF0; --muted:#9DB0B6;
-    --accent:#5CC4CE; --accent-fg:#06262A; --accent-soft:#173B41;
-    --me:#2B5660; --me-fg:#F2F7F8;
-    --rec:#FF8A7A; --rec-soft:#3D1C1C;
-    --warn:#F0C36A; --warn-soft:#3A2F14;
-    --ok:#7FD3A4; --ok-soft:#173526; --miss:#F09A9A; --miss-soft:#3D1C1C;
+    --bg:#0C171B; --card:#14242A; --soft:#1B3038; --line:#26414A;
+    --ink:#E8F1F3; --sub:#9CB3BA;
+    --brand:#2BC4B4; --brand-2:#38D9C4; --brand-ink:#04211F; --brand-soft:#123B38;
+    --coral:#FF8A78; --coral-soft:#3E2220; --sun:#FFD36A; --sun-soft:#3A3115;
+    --ok:#5ED79A; --ok-soft:#14362A; --miss:#FF8C82; --miss-soft:#3E1F1C;
+    --shadow:0 6px 20px rgba(0,0,0,.35);
     color-scheme:dark;
   }
 }
 *{box-sizing:border-box}
 html,body{height:100%}
-body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:16px;line-height:1.6;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;-webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased}
 [hidden]{display:none!important}
 h1,h2,h3{margin:0;line-height:1.3;text-wrap:balance}
-h1{font-size:18px;font-weight:700}
-h2{font-size:17px;font-weight:700}
-h3{font-size:14px;font-weight:600;color:var(--muted);letter-spacing:.02em}
 p{margin:0}
-button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
-button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.mono{font-family:var(--font-data);font-variant-numeric:tabular-nums}
-.muted{color:var(--muted)} .small{font-size:13.5px}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;border:0;background:none}
+:focus-visible{outline:3px solid var(--brand-2);outline-offset:2px}
+.disp{font-family:var(--f-disp);font-weight:400;letter-spacing:.01em}
+.sub{color:var(--sub)} .sm{font-size:13.5px} .xs{font-size:12px}
+.app{max-width:560px;margin-inline:auto;min-height:100%;padding-inline:16px;padding-top:calc(12px + env(safe-area-inset-top,0px));padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))}
+.app.chatting{padding-bottom:0}
+body.playing .app{padding-bottom:calc(190px + env(safe-area-inset-bottom,0px))}
+body.playing .app.chatting{padding-bottom:0}
+.stack{display:flex;flex-direction:column;gap:14px}
+.card{background:var(--card);border-radius:20px;padding:18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px;min-width:0}
+.card h2{font-family:var(--f-disp);font-weight:400;font-size:21px}
+.card h3{font-size:13px;color:var(--sub);font-weight:700;letter-spacing:.06em}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px}
+.pill.sun{background:var(--sun-soft);color:#8A6400}
+@media (prefers-color-scheme: dark){.pill.sun{color:var(--sun)}}
+.pill.brand{background:var(--brand-soft);color:var(--brand)}
+.as{font-size:10.5px;font-weight:700;color:#8A6400;background:var(--sun-soft);border-radius:5px;padding:0 5px;margin-left:4px;white-space:nowrap;vertical-align:1px}
+@media (prefers-color-scheme: dark){.as{color:var(--sun)}}
 
-.app{max-width:760px;margin-inline:auto;min-height:100%;display:flex;flex-direction:column;padding-inline:16px}
-.top{position:sticky;top:0;z-index:5;background:var(--bg);padding-top:calc(10px + env(safe-area-inset-top,0px));padding-bottom:10px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.top .name{flex:1 1 180px;min-width:0;display:flex;flex-direction:column}
-.top .sub{font-size:12px;color:var(--muted)}
-.badge{font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--warn-soft);color:var(--warn);white-space:nowrap}
-.tools{display:flex;gap:6px}
-.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 13px;font-size:15px;font-weight:500;min-height:42px}
-.btn.sm{padding:5px 10px;font-size:13.5px;min-height:34px}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-fg);font-weight:600}
-.btn:disabled{opacity:.45;cursor:not-allowed}
-.btn.icon{min-width:42px;padding-inline:10px}
-
-.view{display:flex;flex-direction:column;gap:14px;padding-block:14px 24px;flex:1}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
-.list{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
-.notice{background:var(--warn-soft);border-radius:10px;padding:10px 12px;font-size:14.5px}
-.notice b{color:var(--warn)}
-.levels{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
-.opt{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start;background:var(--surface);cursor:pointer}
-.opt:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
-.opt input{margin-top:6px;accent-color:var(--accent);width:18px;height:18px}
-.opt b{display:block}
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:10px 18px;border-radius:14px;font-weight:700;font-size:16px;background:var(--soft);color:var(--ink)}
+.btn.main{background:linear-gradient(135deg,var(--brand-2),var(--brand));color:var(--brand-ink);box-shadow:0 8px 18px rgba(14,140,140,.28)}
+.btn.coral{background:var(--coral);color:#fff}
+.btn.ghost{background:transparent;border:1.5px solid var(--line)}
+.btn.sm{min-height:36px;padding:6px 12px;font-size:14px;border-radius:11px}
+.btn:disabled{opacity:.45}
+.btn svg{width:20px;height:20px}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.check{display:flex;gap:8px;align-items:center;font-size:14.5px}
-.check input{width:18px;height:18px;accent-color:var(--accent)}
-select{font:inherit;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 8px;min-height:38px}
-.status{display:flex;flex-direction:column;gap:4px;font-size:14px}
-.status .s{display:flex;gap:8px;align-items:baseline}
-.dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto;transform:translateY(-1px)}
+.grow{flex:1 1 auto}
+
+/* top bar */
+.topbar{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--brand-2),var(--brand));display:grid;place-items:center;color:#fff;font-family:var(--f-disp);font-size:18px;flex:0 0 auto}
+.topbar .t{flex:1;min-width:0}
+.topbar .t b{font-family:var(--f-disp);font-weight:400;font-size:20px;display:block;line-height:1.1}
+
+/* hero */
+.hero{background:linear-gradient(150deg,#14B8A6 0%,#0E8C8C 55%,#0B5F6B 100%);color:#fff;border-radius:24px;padding:20px;position:relative;overflow:hidden;box-shadow:0 12px 28px rgba(11,95,107,.3)}
+.hero::after{content:"";position:absolute;right:-30px;top:-30px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.08)}
+.hero>*{position:relative;z-index:1}
+.hero::after{z-index:0;pointer-events:none}
+.hero .when{font-family:var(--f-mon);font-size:13px;opacity:.85;letter-spacing:.06em}
+.hero h1{font-family:var(--f-disp);font-weight:400;font-size:26px;margin-top:4px}
+.hero p{opacity:.92;font-size:15px;margin-top:6px}
+.hero .hpt{display:flex;align-items:center;gap:12px;margin-top:14px;background:rgba(255,255,255,.14);border-radius:16px;padding:10px 12px}
+.avatar{width:44px;height:44px;border-radius:50%;background:#fff;color:#0E8C8C;display:grid;place-items:center;font-family:var(--f-disp);font-size:18px;flex:0 0 auto}
+.hero .hpt b{display:block;font-size:16px}
+.hero .hpt span{font-size:13px;opacity:.9}
+.mission{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.mission div{background:var(--soft);border-radius:14px;padding:10px;text-align:center;font-size:13px;color:var(--sub)}
+.mission b{display:block;font-family:var(--f-disp);font-weight:400;font-size:20px;color:var(--brand)}
+
+/* segmented */
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--soft);border-radius:14px;padding:4px;gap:4px}
+.seg label{display:block;text-align:center;padding:10px 6px;border-radius:11px;cursor:pointer;font-weight:700;font-size:15px}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label.on,.seg label:has(input:checked){background:var(--card);color:var(--brand);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.seg label span{display:block;font-weight:500;font-size:12px;color:var(--sub)}
+.toggle{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:15px;padding-block:4px}
+.toggle input{appearance:none;-webkit-appearance:none;width:46px;height:28px;border-radius:999px;background:var(--line);position:relative;flex:0 0 auto;cursor:pointer;transition:background .2s}
+.toggle input::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s}
+.toggle input:checked{background:var(--brand-2)}
+.toggle input:checked::after{transform:translateX(18px)}
+.rates{display:flex;gap:6px}
+.rates button{flex:1;min-height:40px;border-radius:11px;background:var(--soft);font-weight:700;font-size:14px}
+.rates button[aria-pressed="true"]{background:var(--brand);color:var(--brand-ink)}
+.env{display:flex;flex-direction:column;gap:6px;font-size:13.5px}
+.env div{display:flex;gap:8px;align-items:flex-start}
+.dot{width:9px;height:9px;border-radius:50%;margin-top:7px;flex:0 0 auto}
 .dot.y{background:var(--ok)} .dot.n{background:var(--miss)}
+.notice{background:var(--coral-soft);border-radius:14px;padding:11px 13px;font-size:14px}
+.notice b{color:var(--coral)}
 
-/* chart */
-.chart{display:flex;flex-direction:column;gap:12px}
-.chart-head{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;justify-content:space-between}
-.chart-head .pt{font-size:17px;font-weight:700}
-.vitals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.vital{background:var(--surface-2);border-radius:8px;padding:7px 10px;min-width:0}
-.vital .k{font-size:11.5px;color:var(--muted);letter-spacing:.04em}
-.vital .v{font-family:var(--font-data);font-size:18px;font-weight:600;font-variant-numeric:tabular-nums}
-.vital .u{font-size:11px;color:var(--muted)}
-.kv{display:grid;grid-template-columns:82px minmax(0,1fr);gap:6px 10px;font-size:14.5px;margin:0}
-.kv dt{color:var(--muted)} .kv dd{margin:0}
-.as{font-size:11px;font-weight:600;color:var(--warn);background:var(--warn-soft);border-radius:4px;padding:0 5px;margin-left:4px;white-space:nowrap}
-.tl{display:grid;grid-template-columns:50px minmax(0,1fr);gap:4px 10px;font-size:14px;margin:0}
-.tl dt{font-family:var(--font-data);color:var(--muted)} .tl dd{margin:0}
-details>summary{cursor:pointer;font-weight:600;font-size:14.5px}
-details[open]>summary{margin-bottom:8px}
+/* monitor */
+.monitor{background:var(--mon);border-radius:22px;padding:14px;color:var(--bt);box-shadow:0 10px 26px rgba(11,22,34,.35);display:flex;flex-direction:column;gap:10px}
+.mon-head{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;color:var(--mon-dim)}
+.mon-head b{color:#fff;font-size:15px}
+.live{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mon);font-size:12px;color:var(--hr)}
+.live i{width:7px;height:7px;border-radius:50%;background:var(--hr)}
+@media (prefers-reduced-motion:no-preference){.live i{animation:blink 1.1s infinite}@keyframes blink{50%{opacity:.25}}}
+.ecg{height:34px;width:100%;display:block}
+.mon-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.mv{background:var(--mon-2);border:1px solid var(--mon-line);border-radius:12px;padding:7px 9px;min-width:0}
+.mv .k{font-family:var(--f-mon);font-size:11px;color:var(--mon-dim);letter-spacing:.08em}
+.mv .v{font-family:var(--f-mon);font-size:26px;line-height:1.05}
+.mv .u{font-family:var(--f-mon);font-size:10.5px;color:var(--mon-dim)}
+.mv.hr .v{color:var(--hr)} .mv.sp .v{color:var(--sp)} .mv.bp .v{color:var(--bp);font-size:22px} .mv.rr .v{color:var(--rr)} .mv.bt .v{color:var(--bt)} .mv.nrs .v{color:var(--nrs)}
+.mon-foot{font-size:11.5px;color:var(--mon-dim)}
 
-/* chat */
-#vChat{padding-bottom:0}
-.steps{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
-.step{border:1px solid var(--line);border-radius:8px;padding:5px 0;text-align:center;background:var(--surface)}
-.step .l{font-family:var(--font-data);font-weight:600;font-size:16px;line-height:1.1}
-.step .n{font-size:10px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-inline:2px}
-.step.done{background:var(--ok-soft);border-color:var(--ok)} .step.done .l{color:var(--ok)}
-.step.now{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)} .step.now .l{color:var(--accent)}
-.hint{background:var(--accent-soft);border-radius:10px;padding:9px 12px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+/* chart tabs */
+.tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:0 0 auto;min-height:38px;padding:6px 14px;border-radius:999px;background:var(--card);font-weight:700;font-size:14px;color:var(--sub);box-shadow:var(--shadow)}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+.kv{display:grid;grid-template-columns:86px minmax(0,1fr);gap:8px 12px;margin:0;font-size:15px}
+.kv dt{color:var(--sub);font-size:13.5px;padding-top:2px}
+.kv dd{margin:0}
+.tl{display:flex;flex-direction:column;gap:0;position:relative}
+.tl-item{display:grid;grid-template-columns:54px 18px minmax(0,1fr);gap:8px;padding-bottom:14px}
+.tl-item .tm{font-family:var(--f-mon);color:var(--sub);font-size:14px;padding-top:1px}
+.tl-item .ln{position:relative}
+.tl-item .ln::before{content:"";position:absolute;left:8px;top:6px;width:2px;bottom:-14px;background:var(--line)}
+.tl-item:last-child .ln::before{display:none}
+.tl-item .ln::after{content:"";position:absolute;left:3px;top:5px;width:12px;height:12px;border-radius:50%;background:var(--card);border:3px solid var(--brand-2)}
+.tl-item.key .ln::after{border-color:var(--coral);background:var(--coral)}
+.tl-item .tx b{display:block;font-size:15px}
+.tl-item .tx span{font-size:14px;color:var(--sub)}
+.vchips{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.vchips span{font-family:var(--f-mon);font-size:12.5px;background:var(--soft);border-radius:6px;padding:0 6px}
+.olist{display:flex;flex-direction:column;gap:8px}
+.oitem{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:start;padding:10px 12px;border-radius:14px;background:var(--soft)}
+.oitem b{font-size:15px}
+.oitem .note{grid-column:1/-1;font-size:13px;color:var(--sub)}
+.st{font-size:11.5px;font-weight:800;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.st.done{background:var(--ok-soft);color:var(--ok)} .st.wait{background:var(--sun-soft);color:#8A6400} .st.no{background:var(--miss-soft);color:var(--miss)}
+@media (prefers-color-scheme: dark){.st.wait{color:var(--sun)}}
+.labs{width:100%;border-collapse:collapse;font-size:14px}
+.labs th{text-align:left;font-size:12px;color:var(--sub);font-weight:700;padding:6px 4px;border-bottom:1px solid var(--line)}
+.labs td{padding:7px 4px;border-bottom:1px solid var(--line);vertical-align:top}
+.labs td.v{font-family:var(--f-mon);font-size:15px;white-space:nowrap}
+.labs td.r{font-family:var(--f-mon);font-size:12.5px;color:var(--sub)}
+.labs .grp td{background:var(--soft);font-weight:800;font-size:12.5px;color:var(--brand);letter-spacing:.04em}
+.flag{font-size:11px;font-weight:800;color:var(--coral);margin-left:4px}
+.scroll-x{overflow-x:auto}
+.ngroup{display:flex;flex-direction:column;gap:6px}
+.ngroup h4{margin:0;font-size:14px;color:var(--brand)}
+.ngroup ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:3px;font-size:14.5px}
+
+/* bottom nav */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--card);background:color-mix(in srgb,var(--card) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.nav .in{max-width:560px;margin-inline:auto;display:grid;grid-template-columns:repeat(4,1fr)}
+.nav button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 0 8px;font-size:12px;font-weight:700;color:var(--sub)}
+.nav button svg{width:24px;height:24px}
+.nav button[aria-current="page"]{color:var(--brand)}
+
+/* practice */
+.ptop{position:sticky;top:0;z-index:10;background:var(--bg);margin-inline:-16px;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px;display:flex;flex-direction:column;gap:10px;border-bottom:1px solid var(--line)}
+.pbar{display:flex;align-items:center;gap:10px}
+.iconbtn{width:42px;height:42px;border-radius:12px;background:var(--card);box-shadow:var(--shadow);display:grid;place-items:center;flex:0 0 auto}
+.iconbtn svg{width:22px;height:22px}
+.mini{flex:1;min-width:0;display:flex;align-items:center;gap:10px;background:var(--mon);color:#fff;border-radius:14px;padding:7px 12px;text-align:left}
+.mini .nm{font-weight:800;font-size:14px;white-space:nowrap}
+.mini .vs{font-family:var(--f-mon);font-size:13px;display:flex;gap:8px;overflow:hidden;white-space:nowrap}
+.mini .vs .h{color:var(--hr)} .mini .vs .b{color:var(--bp)} .mini .vs .s{color:var(--sp)}
+.steps{display:grid;grid-template-columns:1.25fr repeat(7,minmax(0,1fr)) 1.25fr;gap:3px}
+.step{border-radius:9px;padding:4px 0;text-align:center;background:var(--card);border:1.5px solid transparent;min-width:0}
+.step .l{font-family:var(--f-mon);font-size:15px;line-height:1.1;font-weight:700}
+.step .n{font-size:9.5px;color:var(--sub);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-inline:2px}
+.step.wide .l{font-family:var(--f-body);font-size:12.5px;font-weight:800}
+.step.done{background:var(--ok-soft)} .step.done .l{color:var(--ok)}
+.step.now{border-color:var(--brand-2)} .step.now .l{color:var(--brand)}
+.hint{background:var(--brand-soft);border-radius:14px;padding:9px 12px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.hint b{color:var(--brand)}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 11px;font-size:13.5px;font-family:var(--font-data);min-height:32px}
-.log{display:flex;flex-direction:column;gap:10px;padding-bottom:12px}
-.who{font-size:12px;color:var(--muted);margin-bottom:-6px}
+.chip{border-radius:999px;padding:4px 11px;font-size:13.5px;font-family:var(--f-mon);background:var(--card);min-height:32px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.log{display:flex;flex-direction:column;gap:10px;padding-block:14px}
+.who{font-size:12px;color:var(--sub);display:flex;align-items:center;gap:6px;margin-bottom:-6px}
+.who .av{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800;color:#fff;background:var(--brand)}
 .who.me{align-self:flex-end}
-.msg{max-width:88%;padding:10px 14px;border-radius:16px;white-space:pre-wrap;overflow-wrap:anywhere;position:relative}
-.msg.ai{align-self:flex-start;background:var(--surface);border:1px solid var(--line);border-bottom-left-radius:4px}
-.msg.me{align-self:flex-end;background:var(--me);color:var(--me-fg);border-bottom-right-radius:4px}
-.msg.sys{align-self:center;color:var(--muted);font-size:13.5px;padding:2px 8px;text-align:center;max-width:100%}
-.replay{display:inline-block;margin-top:6px;font-size:12.5px;border:1px solid var(--line);border-radius:999px;padding:1px 9px;background:var(--surface-2)}
-.bar{position:sticky;bottom:0;z-index:6;background:var(--bg);border-top:1px solid var(--line);padding-top:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:8px}
-.bar textarea{width:100%;min-height:64px;max-height:30vh;resize:none;font:inherit;font-size:16px;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
-.bar .controls{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center}
-.mic{width:64px;height:64px;border-radius:50%;border:0;background:var(--accent);color:var(--accent-fg);display:grid;place-items:center}
-.mic svg{width:28px;height:28px}
-.mic.on{background:var(--rec);color:#fff}
-@media (prefers-reduced-motion:no-preference){.mic.on{animation:pulse 1.2s ease-in-out infinite}@keyframes pulse{0%,100%{box-shadow:0 0 0 0 var(--rec-soft)}50%{box-shadow:0 0 0 10px var(--rec-soft)}}}
-.mic:disabled{opacity:.4}
-.micLabel{font-size:13.5px;color:var(--muted);line-height:1.35}
-.micLabel b{color:var(--fg)}
-.count{font-family:var(--font-data);font-size:12.5px;color:var(--muted)}
+.who.me .av{background:var(--coral)}
+.msg{max-width:86%;padding:11px 15px;border-radius:20px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:15.5px}
+.msg.ai{align-self:flex-start;background:var(--card);border-bottom-left-radius:6px;box-shadow:var(--shadow)}
+.msg.me{align-self:flex-end;background:linear-gradient(135deg,var(--brand-2),var(--brand));color:#fff;border-bottom-right-radius:6px}
+.msg.sys{align-self:center;background:var(--soft);color:var(--sub);font-size:13px;padding:5px 12px;border-radius:999px;text-align:center;max-width:100%}
+.msg .again{display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:12.5px;font-weight:700;color:var(--brand);background:var(--brand-soft);border-radius:999px;padding:2px 10px}
+.composer{position:sticky;bottom:0;z-index:10;margin-inline:-16px;padding:10px 16px calc(12px + env(safe-area-inset-bottom,0px));background:var(--bg);border-top:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.composer textarea{width:100%;min-height:58px;max-height:28vh;resize:none;font:inherit;font-size:16px;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:10px 13px}
+.composer textarea:focus{border-color:var(--brand-2);outline:none}
+.cbar{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px}
+.mic{width:68px;height:68px;border-radius:50%;background:var(--coral);color:#fff;display:grid;place-items:center;box-shadow:0 8px 20px rgba(255,107,87,.4)}
+.mic svg{width:30px;height:30px}
+.mic.on{background:#E0362A}
+@media (prefers-reduced-motion:no-preference){.mic.on{animation:ring 1.2s ease-out infinite}@keyframes ring{0%{box-shadow:0 0 0 0 rgba(255,107,87,.55)}100%{box-shadow:0 0 0 18px rgba(255,107,87,0)}}}
+.mic:disabled{opacity:.4;box-shadow:none}
+.mic-lab{font-size:13px;color:var(--sub);line-height:1.35}
+.mic-lab b{display:block;font-size:15px;color:var(--ink)}
+.cnt{font-family:var(--f-mon)}
 
 /* feedback */
-.score{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center}
-.big{font-family:var(--font-data);font-size:36px;font-weight:600;line-height:1}
-.big small{font-size:16px;color:var(--muted);font-weight:400}
+.ring{width:112px;height:112px;flex:0 0 auto}
+.ring .bgc{stroke:var(--soft)} .ring .fgc{stroke:var(--brand-2)}
+.ring text{fill:var(--ink);font-family:var(--f-disp);font-size:26px}
+.ring .sm2{font-size:12px;fill:var(--sub);font-family:var(--f-body)}
+.score{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.score p{flex:1 1 200px}
 .ck{display:flex;flex-direction:column;gap:10px}
-.ck-row{display:grid;grid-template-columns:32px minmax(0,1fr);gap:10px}
-.ck-row .l{font-family:var(--font-data);font-weight:600;font-size:16px;text-align:center;background:var(--surface-2);border-radius:6px;padding:2px 0;align-self:start}
+.ck-row{display:grid;grid-template-columns:42px minmax(0,1fr);gap:10px}
+.ck-row .l{font-family:var(--f-mon);font-weight:700;font-size:15px;text-align:center;background:var(--soft);border-radius:9px;padding:3px 0;align-self:start}
+.ck-row .l.w{font-family:var(--f-body);font-size:12px;padding:5px 0}
 .ck-items{display:flex;flex-wrap:wrap;gap:6px}
-.ck-item{font-size:13.5px;border-radius:6px;padding:2px 8px;border:1px solid var(--line)}
-.ck-item.y{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
-.ck-item.n{background:var(--miss-soft);border-color:var(--miss);color:var(--miss)}
+.ck-item{font-size:13.5px;border-radius:9px;padding:3px 9px;font-weight:600}
+.ck-item.y{background:var(--ok-soft);color:var(--ok)}
+.ck-item.n{background:var(--miss-soft);color:var(--miss)}
 .fb{display:flex;flex-direction:column;gap:10px}
-.fb-item{border-left:3px solid var(--accent);padding:2px 0 2px 12px;display:flex;flex-direction:column;gap:2px;font-size:14.5px}
-.fb-item .said{color:var(--muted)}
-.fb-item b{color:var(--accent)}
-.model{display:grid;grid-template-columns:32px minmax(0,1fr);gap:10px;font-size:14.5px}
-.model .l{font-family:var(--font-data);font-weight:600;text-align:center;background:var(--surface-2);border-radius:6px;padding:2px 0;align-self:start}
-.quote{background:var(--surface-2);border-radius:10px;padding:9px 12px;font-size:14.5px;white-space:pre-wrap;overflow-wrap:anywhere}
-textarea.copy{width:100%;font:inherit;font-size:14px;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px}
+.fb-item{border-radius:14px;background:var(--soft);padding:10px 12px;display:flex;flex-direction:column;gap:3px;font-size:14.5px}
+.fb-item .said{font-size:13px;color:var(--sub)}
+.fb-item .bt{color:var(--brand);font-weight:800;margin-right:6px}
+.quote{background:var(--soft);border-radius:14px;padding:10px 12px;font-size:14.5px;white-space:pre-wrap;overflow-wrap:anywhere}
+
+/* model + player */
+.mlist{display:flex;flex-direction:column;gap:10px}
+.mcard{display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;padding:12px;border-radius:16px;background:var(--soft);text-align:left;width:100%;border:2px solid transparent}
+.mcard .l{width:44px;height:44px;border-radius:12px;background:var(--card);display:grid;place-items:center;font-family:var(--f-mon);font-size:18px;font-weight:700;color:var(--brand)}
+.mcard .l.w{font-family:var(--f-body);font-size:12.5px;font-weight:800}
+.mcard b{display:block;font-size:14px}
+.mcard .tx{font-size:14.5px;line-height:1.65}
+.mcard.playing{border-color:var(--brand-2);background:var(--brand-soft)}
+.mcard .tx mark{background:var(--sun-soft);color:inherit;border-radius:4px;padding:0 2px}
+.player{position:fixed;left:0;right:0;bottom:calc(64px + env(safe-area-inset-bottom,0px));z-index:31;padding-inline:12px}
+.player .in{max-width:536px;margin-inline:auto;background:var(--ink);color:var(--bg);border-radius:20px;padding:10px 12px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;box-shadow:0 12px 28px rgba(0,0,0,.3)}
+.player .now{min-width:0}
+.player .now b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.player .now span{font-size:12px;opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.player .prog{grid-column:1/-1;height:4px;border-radius:2px;background:rgba(127,127,127,.35);overflow:hidden}
+.player .prog i{display:block;height:100%;width:0;background:var(--brand-2);transition:width .3s}
+.pc{display:flex;gap:6px}
+.pc button{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:rgba(127,127,127,.22);color:inherit}
+.pc button.big{background:var(--brand-2);color:#04211F;width:46px;height:46px}
+.pc svg{width:20px;height:20px}
+.player.in-chat{bottom:calc(10px + env(safe-area-inset-bottom,0px))}
 
 /* sheets */
-.scrim{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:20}
-.sheet{position:fixed;left:0;right:0;bottom:0;max-height:88dvh;background:var(--surface);z-index:21;border-radius:16px 16px 0 0;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom,0px);max-width:760px;margin-inline:auto}
-.sheet-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line)}
-.sheet-body{padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;min-height:0;-webkit-overflow-scrolling:touch}
-@media (prefers-reduced-motion:no-preference){.sheet{animation:up .2s ease-out}@keyframes up{from{transform:translateY(30px);opacity:.6}to{transform:none;opacity:1}}}
-.search{width:100%;font:inherit;font-size:16px;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
-.term-list{display:flex;flex-direction:column}
-.term-btn{text-align:left;border:0;border-bottom:1px solid var(--line);background:transparent;padding:10px 4px;display:flex;justify-content:space-between;gap:10px;align-items:baseline}
-.term-btn .en{font-family:var(--font-data);font-size:14.5px;overflow-wrap:anywhere}
-.term-btn .ko{font-size:13.5px;color:var(--muted);text-align:right;flex:0 0 auto;max-width:46%}
-.term h2{font-family:var(--font-data);overflow-wrap:anywhere}
+.scrim{position:fixed;inset:0;background:rgba(5,15,20,.5);z-index:40}
+.sheet{position:fixed;left:0;right:0;bottom:0;max-height:90dvh;z-index:41;background:var(--bg);border-radius:24px 24px 0 0;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom,0px);max-width:560px;margin-inline:auto}
+.sheet .grab{width:44px;height:5px;border-radius:3px;background:var(--line);margin:8px auto 0}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 16px 10px}
+.sheet-head h2{font-family:var(--f-disp);font-weight:400;font-size:20px}
+.sheet-body{padding:4px 16px 18px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;min-height:0;-webkit-overflow-scrolling:touch}
+@media (prefers-reduced-motion:no-preference){.sheet{animation:up .22s ease-out}@keyframes up{from{transform:translateY(40px);opacity:.5}to{transform:none;opacity:1}}}
+.search{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:11px 14px}
+.tlist{display:flex;flex-direction:column;background:var(--card);border-radius:18px;overflow:hidden;box-shadow:var(--shadow)}
+.tbtn{text-align:left;padding:12px 14px;display:flex;justify-content:space-between;gap:12px;align-items:baseline;border-bottom:1px solid var(--line)}
+.tbtn:last-child{border-bottom:0}
+.tbtn .en{font-family:var(--f-mon);font-size:15px;overflow-wrap:anywhere}
+.tbtn .ko{font-size:13.5px;color:var(--sub);text-align:right;flex:0 0 auto;max-width:46%}
+.term h2{font-family:var(--f-mon);font-size:22px;overflow-wrap:anywhere}
 .comp{display:flex;flex-wrap:wrap;gap:6px}
-.comp span{background:var(--surface-2);border-radius:6px;padding:3px 8px;font-size:13.5px}
-.comp b{font-family:var(--font-data)}
-.tag{font-size:12px;border:1px solid var(--line);border-radius:4px;padding:0 6px;color:var(--muted);white-space:nowrap}
+.comp span{background:var(--soft);border-radius:9px;padding:4px 9px;font-size:13.5px}
+.comp b{font-family:var(--f-mon)}
+.tag{font-size:12px;font-weight:700;background:var(--soft);border-radius:6px;padding:1px 7px;color:var(--sub);white-space:nowrap}
+.ipa{font-family:var(--f-mon);font-size:15px;color:var(--brand)}
 </style>
 </head>
 <body>
-<div class="app">
-  <header class="top">
-    <div class="name">
-      <h1>MediTalk-N 인수인계 연습</h1>
-      <span class="sub">응급실 evening → night · PASS-BAR · 가슴통증 환자</span>
-    </div>
-    <span class="badge">검수 전 시제품</span>
-    <div class="tools">
-      <button class="btn sm" id="btnChart" type="button">환자 정보</button>
-      <button class="btn sm" id="btnGloss" type="button">용어</button>
-    </div>
-  </header>
+<div class="app" id="app">
 
-  <!-- 시작 -->
-  <main class="view" id="vStart">
-    <section class="panel">
-      <h2>말로 인계하기</h2>
-      <p>당신은 응급실 <b>evening 간호사</b>입니다. 근무를 마치며 <b>night 간호사</b>에게 심근식 님을 인계합니다. 마이크 버튼을 누르고 PASS-BAR 순서로 말해 보세요.</p>
-      <ul class="list small">
-        <li>PASS-BAR 순서에 따라 환자 정보를 빠짐없이 인계한다.</li>
-        <li>인계에 필요한 의학용어와 약어를 정확하게 사용한다.</li>
-        <li>수치, 시각, 용량을 포함해 전문적 표현으로 전달한다.</li>
-      </ul>
-      <div class="notice"><b>입력하지 마세요.</b> 실명, 학번, 실제 환자 정보는 말하거나 쓰지 않습니다. 대화는 저장되지 않으며 화면을 닫으면 사라집니다.</div>
-    </section>
-
-    <section class="panel">
+  <!-- 홈 -->
+  <section id="vHome" class="stack">
+    <div class="topbar">
+      <div class="logo">M</div>
+      <div class="t"><b>MediTalk-N</b><span class="xs sub">말로 익히는 임상 의학용어</span></div>
+      <span class="pill sun">검수 전 시제품</span>
+    </div>
+    <div class="hero">
+      <div class="when">TONIGHT · 22:30 · 응급실 간호사실</div>
+      <h1>이브닝 → 나이트 인수인계</h1>
+      <p>오늘 이브닝 근무를 마쳤어요. 나이트 간호사에게 PASS-BAR 순서로 말로 인계해 보세요.</p>
+      <div class="hpt"><div class="avatar">심</div><div><b>심근식 (M/58)</b><span>inferior STEMI · primary PCI 후 CCU 대기</span></div></div>
+    </div>
+    <div class="mission">
+      <div><b>1</b>인사하기</div>
+      <div><b>2</b>PASS-BAR</div>
+      <div><b>3</b>궁금한 점 묻기</div>
+    </div>
+    <div class="card">
       <h3>난이도</h3>
-      <div class="levels">
-        <label class="opt"><input type="radio" name="level" id="lvBasic" value="basic" checked><span><b>기본</b><span class="small muted">간호사가 단계마다 질문으로 이끌고, 핵심 용어 힌트가 보입니다.</span></span></label>
-        <label class="opt"><input type="radio" name="level" id="lvAdv" value="adv"><span><b>심화</b><span class="small muted">힌트 없이 끝까지 인계한 뒤, 빠진 내용과 심화 질문을 받습니다.</span></span></label>
+      <div class="seg" role="radiogroup" aria-label="난이도">
+        <label><input type="radio" name="lv" id="lvBasic" value="basic" checked>기본<span>단계별 질문과 힌트</span></label>
+        <label><input type="radio" name="lv" id="lvAdv" value="adv">심화<span>힌트 없이 끝까지</span></label>
       </div>
+      <button class="btn main" id="btnStart" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v4"/></svg>
+        말로 인계 시작
+      </button>
+      <div class="row">
+        <button class="btn ghost grow" id="btnGoChart" type="button">환자 차트 보기</button>
+        <button class="btn ghost grow" id="btnGoModel" type="button">모범 인계 듣기</button>
+      </div>
+    </div>
+    <div class="card">
       <h3>음성 설정</h3>
-      <label class="check"><input type="checkbox" id="optSpeak" checked> 간호사 말을 소리로 듣기</label>
-      <label class="check"><input type="checkbox" id="optAutoSend"> 말을 마치면 바로 보내기 (끄면 받아 적은 글을 고친 뒤 보냄)</label>
-      <div class="row"><label for="optRate" class="small">말하기 속도</label>
-        <select id="optRate"><option value="0.85">느리게</option><option value="1" selected>보통</option><option value="1.15">빠르게</option></select>
+      <label class="toggle">나이트 간호사 말을 소리로 듣기<input type="checkbox" id="optSpeak" checked></label>
+      <label class="toggle">말을 마치면 바로 보내기<input type="checkbox" id="optAuto"></label>
+      <div class="rates" role="group" aria-label="말하기 속도">
+        <button type="button" data-rate="0.85">느리게</button>
+        <button type="button" data-rate="1" aria-pressed="true">보통</button>
+        <button type="button" data-rate="1.15">빠르게</button>
       </div>
-      <div class="status" id="envStatus"></div>
-      <button class="btn primary" id="btnStart" type="button">인계 시작</button>
-      <button class="btn" id="btnModelOnly" type="button">모범 발화 먼저 듣기</button>
-    </section>
+      <div class="env" id="env"></div>
+    </div>
+    <div class="notice"><b>입력하지 마세요.</b> 실명, 학번, 실제 환자 정보는 말하거나 쓰지 않습니다. 대화는 저장되지 않아요.</div>
+  </section>
 
-    <section class="panel" id="chartStart"></section>
-  </main>
+  <!-- 환자 차트 -->
+  <section id="vChart" class="stack" hidden>
+    <div class="topbar"><div class="t"><b>환자 차트</b><span class="xs sub">22:30 기준 · ‘가정’은 시나리오 문서에 없어 새로 정한 값</span></div></div>
+    <div id="monitorBox"></div>
+    <div class="tabs" role="tablist" id="chartTabs"></div>
+    <div class="card" id="chartPane"></div>
+  </section>
 
-  <!-- 대화 -->
-  <main class="view" id="vChat" hidden>
-    <div class="steps" id="steps"></div>
-    <div class="hint" id="hint"></div>
+  <!-- 모범 인계 -->
+  <section id="vModel" class="stack" hidden>
+    <div class="topbar"><div class="t"><b>모범 인계</b><span class="xs sub">카드를 누르면 그 부분부터 들려줘요</span></div></div>
+    <button class="btn main" id="btnPlayAll" type="button">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>처음부터 듣기
+    </button>
+    <div class="mlist" id="modelList"></div>
+    <p class="xs sub">모범 인계의 수치는 시나리오 설정값이며 임상 지침이 아닙니다.</p>
+  </section>
+
+  <!-- 용어 -->
+  <section id="vTerms" class="stack" hidden>
+    <div class="topbar"><div class="t"><b>용어 사전</b><span class="xs sub">이 장면에서 쓰는 용어 · 발음 듣기</span></div></div>
+    <input class="search" id="q" type="search" placeholder="영문, 약어, 한글로 검색" aria-label="용어 검색">
+    <div id="termBody"></div>
+  </section>
+
+  <!-- 연습 -->
+  <section id="vChat" hidden>
+    <div class="ptop">
+      <div class="pbar">
+        <button class="iconbtn" id="btnBack" type="button" aria-label="홈으로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <button class="mini" id="btnMini" type="button" aria-label="환자 차트 열기"><span class="nm">심근식 58M</span><span class="vs"><span class="b">118/72</span><span class="h">HR 78</span><span class="s">SpO2 98</span></span></button>
+        <button class="iconbtn" id="btnTermsQuick" type="button" aria-label="용어 사전"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg></button>
+      </div>
+      <div class="steps" id="steps"></div>
+      <div class="hint" id="hint"></div>
+    </div>
     <div class="log" id="log" aria-live="polite"></div>
-    <div class="bar">
+    <div class="composer">
       <textarea id="box" placeholder="마이크를 누르고 말하거나 직접 입력하세요" aria-label="인계 내용"></textarea>
-      <div class="controls">
-        <button class="mic" id="btnMic" type="button" aria-label="말하기 시작">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><path d="M12 17v4"/></svg>
-        </button>
-        <div class="micLabel" id="micLabel"><b>눌러서 말하기</b><br><span class="count" id="count">0 / 14</span></div>
-        <div class="row" style="justify-content:flex-end">
-          <button class="btn" id="btnEnd" type="button">마치기</button>
-          <button class="btn primary" id="btnSend" type="button">보내기</button>
+      <div class="cbar">
+        <button class="mic" id="btnMic" type="button" aria-label="말하기 시작"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v4"/></svg></button>
+        <div class="mic-lab" id="micLab"><b>눌러서 말하기</b><span class="cnt" id="cnt">0 / 16</span></div>
+        <div class="row" style="justify-content:flex-end;flex-wrap:nowrap">
+          <button class="btn sm ghost" id="btnEnd" type="button">마치기</button>
+          <button class="btn sm main" id="btnSend" type="button">보내기</button>
         </div>
       </div>
     </div>
-  </main>
+  </section>
 
   <!-- 피드백 -->
-  <main class="view" id="vFeed" hidden>
-    <section class="panel" id="fbSum"></section>
-    <section class="panel" id="fbCheck"></section>
-    <section class="panel" id="fbAxes"></section>
-    <section class="panel" id="fbTerms"></section>
-    <section class="panel" id="fbModel"></section>
-    <section class="panel" id="fbLog"></section>
+  <section id="vFeed" class="stack" hidden>
+    <div class="topbar"><div class="t"><b>인계 결과</b><span class="xs sub">단어 일치 방식의 자동 판정이에요</span></div></div>
+    <div class="card" id="fbSum"></div>
+    <div class="card" id="fbCheck"></div>
+    <div class="card" id="fbAxes"></div>
+    <div class="card" id="fbTerms"></div>
+    <div class="card" id="fbLog"></div>
     <div class="row">
-      <button class="btn primary" id="btnAgain" type="button">다시 연습하기</button>
-      <button class="btn" id="btnCopy" type="button">결과 복사</button>
-      <span class="small muted" id="copyState"></span>
+      <button class="btn main grow" id="btnAgain" type="button">다시 연습하기</button>
+      <button class="btn ghost grow" id="btnModel2" type="button">모범 인계 듣기</button>
     </div>
-    <textarea class="copy" id="copyArea" rows="6" readonly hidden aria-label="복사할 결과"></textarea>
-  </main>
+    <button class="btn ghost" id="btnCopy" type="button">결과 복사</button>
+    <span class="sm sub" id="copyState"></span>
+    <textarea class="search" id="copyArea" rows="6" readonly hidden aria-label="복사할 결과"></textarea>
+  </section>
 </div>
 
-<div class="scrim" id="scrim" hidden></div>
-<aside class="sheet" id="sChart" hidden aria-label="환자 정보">
-  <div class="sheet-head"><h2>환자 정보</h2><button class="btn sm" type="button" data-close>닫기</button></div>
-  <div class="sheet-body" id="chartSheet"></div>
-</aside>
-<aside class="sheet" id="sGloss" hidden aria-label="용어 사전">
-  <div class="sheet-head"><h2>용어 사전</h2><button class="btn sm" type="button" data-close>닫기</button></div>
-  <div class="sheet-body">
-    <input class="search" id="q" type="search" placeholder="영문, 약어, 한글로 검색" aria-label="용어 검색">
-    <div id="glossBody"></div>
+<!-- 하단 탭 -->
+<nav class="nav" id="nav" aria-label="메뉴"><div class="in">
+  <button type="button" data-go="vHome" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>홈</button>
+  <button type="button" data-go="vChart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>환자 차트</button>
+  <button type="button" data-go="vModel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg>모범 인계</button>
+  <button type="button" data-go="vTerms"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>용어</button>
+</div></nav>
+
+<!-- 재생기 -->
+<div class="player" id="player" hidden><div class="in">
+  <div class="now"><b id="plTitle">모범 인계</b><span id="plSub"></span></div>
+  <div class="pc">
+    <button type="button" id="plPrev" aria-label="이전 문장"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zM9.5 12l8.5 6V6z"/></svg></button>
+    <button type="button" id="plToggle" class="big" aria-label="일시 정지"><svg viewBox="0 0 24 24" fill="currentColor" id="plIcon"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
+    <button type="button" id="plNext" aria-label="다음 문장"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg></button>
+    <button type="button" id="plStop" aria-label="정지"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h12v12H6z"/></svg></button>
   </div>
+  <div class="prog"><i id="plProg"></i></div>
+</div></div>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="sheet" id="sheet" hidden aria-label="상세">
+  <div class="grab"></div>
+  <div class="sheet-head"><h2 id="sheetTitle"></h2><button class="btn sm ghost" type="button" id="sheetClose">닫기</button></div>
+  <div class="sheet-body" id="sheetBody"></div>
 </aside>
 
 <script>
 /* =========================================================
-   MediTalk-N 인수인계 연습 (규칙 기반 v0.1)
-   - 1. 자료(DATA, PATIENT, STAGES)
-   - 2. 음성(Voice): 받아쓰기·읽어 주기
-   - 3. 대화 엔진(RuleEngine): 나중에 API 엔진으로 교체하는 부분
-   - 4. 화면
+   MediTalk-N 인수인계 연습 v0.2 (규칙 기반, API 없음)
+   1. 자료  2. 읽기 사전·음성  3. 대화 엔진(교체 지점)  4. 화면
    ========================================================= */
 
 /* ---------- 1. 자료 ---------- */
 const DATA = {"terms": [{"id": "CV-015", "en": "inferior", "ab": "", "full": "", "ko": "아래(하벽)", "ipa": "/ɪnˈfɪr.i.ər/", "comp": [["infer/o", "어근(결합형)", "아래"], ["-ior", "접미사", "~쪽의"]], "de": "아래쪽의. inferior MI는 심장 아래벽의 심근경색증", "ctx": "II, III, aVF의 ST 상승은 하벽 경색을 시사. 서맥과 저혈압 관찰", "plain": "심장의 아래쪽 부분", "typ": "해부·부위", "lv": "심화", "ex": "II, III, aVF에서 ST elevation 보여 inferior MI 의심됩니다.", "memo": "반대는 superior. anterior(전벽), lateral(측벽), posterior(후벽)와 함께 학습", "cand": false}, {"id": "CV-006", "en": "ST-segment elevation myocardial infarction", "ab": "STEMI", "full": "ST-segment elevation myocardial infarction", "ko": "ST분절상승 심근경색증", "ipa": "/ˈstɛm.i/", "comp": [], "de": "ECG에서 ST분절 상승이 동반된 심근경색증", "ctx": "Phase 2의 핵심 변화. 확인 즉시 재보고하고 CAG/PCI 준비", "plain": "심전도에서 응급 신호가 보이는 심근경색", "typ": "진단", "lv": "기본", "ex": "진단명은 HTN, hyperlipidemia, R/O STEMI 환자입니다.", "memo": "약어를 단어처럼 읽음", "cand": false}, {"id": "CV-005", "en": "myocardial infarction", "ab": "MI", "full": "", "ko": "심근경색증", "ipa": "/maɪ.əˈkɑːr.di.əl ɪnˈfɑːrk.ʃən/", "comp": [["my/o", "어근(결합형)", "근육"], ["cardi/o", "어근(결합형)", "심장"], ["-al", "접미사", "~의"], ["infarct/o", "어근(결합형)", "경색"], ["-ion", "접미사", "상태, 과정"]], "de": "관상동맥 혈류가 막혀 심근이 괴사한 상태", "ctx": "NTG 3회 투여에도 흉통이 지속되면 진행을 의심하고 즉시 보고", "plain": "심장 혈관이 막혀 심장 근육이 손상된 상태", "typ": "진단", "lv": "기본", "ex": "NTG 2회 투여에도 흉통 지속되어 MI 진행 가능성 있어 보고드립니다.", "memo": "", "cand": false}, {"id": "CV-051", "en": "percutaneous coronary intervention", "ab": "PCI", "full": "", "ko": "경피관상동맥중재술", "ipa": "/pɜːr.kjuːˈteɪ.ni.əs ˈkɔːr.ə.ner.i ɪn.tərˈvɛn.ʃən/", "comp": [["per-", "접두사", "통하여"], ["cutane/o", "어근(결합형)", "피부"], ["-ous", "접미사", "~의"], ["coron/o", "어근(결합형)", "관상동맥"], ["-ary", "접미사", "~의"]], "de": "피부를 통해 카테터를 넣어 좁아진 관상동맥을 넓히는 시술", "ctx": "CAG에서 병변 확인 시 이어서 시행", "plain": "막힌 심장 혈관을 가는 관으로 뚫는 시술", "typ": "처치·시술", "lv": "기본", "ex": "CAG와 PCI 예정으로 전처치 진행하겠습니다.", "memo": "", "cand": false}, {"id": "CV-050", "en": "coronary angiography", "ab": "CAG", "full": "", "ko": "관상동맥조영술", "ipa": "/ˈkɔːr.ə.ner.i æn.dʒiˈɑː.ɡrə.fi/", "comp": [["coron/o", "어근(결합형)", "관상동맥"], ["-ary", "접미사", "~의"], ["angi/o", "어근(결합형)", "혈관"], ["-graphy", "접미사", "기록(촬영)법"]], "de": "조영제를 주입해 관상동맥의 협착과 폐색을 촬영하는 검사", "ctx": "응급 CAG 처방. 시술 전 준비(동의서, 알레르기, 금식, 접근 부위)", "plain": "심장 혈관을 조영제로 찍어 보는 검사", "typ": "처치·시술", "lv": "기본", "ex": "응급 CAG 환자 인계 드리겠습니다.", "memo": "", "cand": false}, {"id": "CV-035", "en": "alert", "ab": "", "full": "", "ko": "명료", "ipa": "/əˈlɜːrt/", "comp": [], "de": "의식이 또렷하고 자극에 적절히 반응하는 상태", "ctx": "의식 수준 보고(mental alert)", "plain": "의식이 또렷한 상태", "typ": "증상·징후", "lv": "기본", "ex": "mental alert하고 의사소통 가능합니다.", "memo": "", "cand": false}, {"id": "CV-032", "en": "vital signs", "ab": "V/S", "full": "", "ko": "활력징후", "ipa": "/ˈvaɪ.təl saɪnz/", "comp": [], "de": "혈압, 맥박, 호흡, 체온 등 생명 유지 상태를 나타내는 지표", "ctx": "단계마다 재측정하여 수치로 보고", "plain": "혈압, 맥박, 호흡, 체온", "typ": "검사", "lv": "기본", "ex": "V/S 135/90, 108회, 24회, 36.5도입니다.", "memo": "", "cand": false}, {"id": "CV-033", "en": "oxygen saturation", "ab": "SpO2", "full": "peripheral oxygen saturation", "ko": "산소포화도", "ipa": "/ˈɑːk.sɪ.dʒən sætʃ.əˈreɪ.ʃən/", "comp": [], "de": "혈색소가 산소와 결합한 비율. 맥박산소측정기 측정값은 SpO2", "ctx": "산소 투여 조건과 함께 보고. morphine 투여 전후 확인", "plain": "피 속 산소가 얼마나 차 있는지 보는 수치", "typ": "검사", "lv": "기본", "ex": "O2 4 L에서 SpO2 97%입니다.", "memo": "", "cand": false}, {"id": "CV-034", "en": "numeric rating scale", "ab": "NRS", "full": "", "ko": "숫자통증척도", "ipa": "/nuːˈmɛr.ɪk ˈreɪ.tɪŋ skeɪl/", "comp": [], "de": "통증을 0~10의 숫자로 표현하는 척도", "ctx": "투약 전후 통증 재평가. NTG PRN 기준(NRS 5점 이상)", "plain": "통증을 0점에서 10점으로 말하는 방법", "typ": "사정·보고 도구", "lv": "기본", "ex": "NTG 투여 후에도 NRS 7~8점으로 지속됩니다.", "memo": "", "cand": false}, {"id": "CV-001", "en": "chest pain", "ab": "", "full": "", "ko": "가슴통증(흉통)", "ipa": "/tʃɛst peɪn/", "comp": [], "de": "가슴 부위에 느끼는 통증", "ctx": "주호소. OPQRST로 양상을 사정한 뒤 보고", "plain": "가슴이 아픈 증상", "typ": "증상·징후", "lv": "기본", "ex": "심근식 58세 남자 환자, acute chest pain 있어 연락드렸습니다.", "memo": "", "cand": false}, {"id": "CV-002", "en": "chest discomfort", "ab": "", "full": "", "ko": "가슴불편감", "ipa": "/tʃɛst dɪsˈkʌm.fərt/", "comp": [], "de": "통증으로 표현하기 어려운 가슴의 답답함이나 압박감", "ctx": "내원 전 증상 기술(2개월 전부터 계단 오를 때)", "plain": "가슴이 답답하고 불편한 느낌", "typ": "증상·징후", "lv": "기본", "ex": "2개월 전부터 계단 오를 때 chest discomfort 있었으나 쉬면 호전되었다고 합니다.", "memo": "", "cand": false}, {"id": "CV-003", "en": "acute", "ab": "", "full": "", "ko": "급성", "ipa": "/əˈkjuːt/", "comp": [], "de": "갑자기 발생하고 경과가 빠른", "ctx": "증상의 발생 양상 표현(acute chest pain)", "plain": "갑자기 생긴", "typ": "증상·징후", "lv": "기본", "ex": "오늘 저녁 8시경 acute chest pain 발생해 119로 내원했습니다.", "memo": "반대 개념은 chronic(만성)", "cand": false}, {"id": "CV-016", "en": "dyspnea", "ab": "", "full": "", "ko": "호흡곤란", "ipa": "/ˈdɪsp.ni.ə/", "comp": [["dys-", "접두사", "어려운, 이상"], ["-pnea", "접미사", "호흡"]], "de": "숨쉬기 힘들다고 느끼는 주관적 증상", "ctx": "흉통의 동반 증상으로 보고", "plain": "숨이 찬 증상", "typ": "증상·징후", "lv": "기본", "ex": "흉통과 함께 식은땀, dyspnea 동반되어 내원했습니다.", "memo": "-pnea 계열은 사전별 강세 이형 있음(/dɪspˈniː.ə/). 교재 표기와 통일 필요", "cand": false}, {"id": "CV-023", "en": "electrocardiogram", "ab": "ECG, EKG", "full": "", "ko": "심전도", "ipa": "/ɪ.lɛk.troʊˈkɑːr.di.ə.ɡræm/", "comp": [["electr/o", "어근(결합형)", "전기"], ["cardi/o", "어근(결합형)", "심장"], ["-gram", "접미사", "기록(도)"]], "de": "심장의 전기 활동을 기록한 그림", "ctx": "12-lead ECG 처방. monitor의 리듬 변화도 관찰", "plain": "심장의 전기 신호를 그래프로 보는 검사", "typ": "검사", "lv": "기본", "ex": "12-lead ECG 찍고 troponin I POCT 시행하겠습니다.", "memo": "시나리오 문서에 ECG와 EKG 혼용", "cand": false}, {"id": "CV-025", "en": "ST elevation", "ab": "", "full": "", "ko": "ST분절 상승", "ipa": "/ɛs tiː ɛl.əˈveɪ.ʃən/", "comp": [], "de": "ECG의 ST분절이 기저선보다 올라간 소견", "ctx": "Phase 2의 핵심 소견. 유도(II, III, aVF)와 함께 보고", "plain": "심전도에서 응급 치료가 필요하다는 신호", "typ": "검사", "lv": "기본", "ex": "심전도상 II, III, aVF에서 ST elevation 보입니다.", "memo": "", "cand": false}, {"id": "CV-024", "en": "ST depression", "ab": "", "full": "", "ko": "ST분절 하강", "ipa": "/ɛs tiː dɪˈprɛʃ.ən/", "comp": [], "de": "ECG의 ST분절이 기저선보다 내려간 소견", "ctx": "내원 시 monitor 소견. 심근허혈을 시사", "plain": "심전도에서 심장에 피가 부족하다는 신호", "typ": "검사", "lv": "심화", "ex": "monitor상 ST depression 보입니다.", "memo": "", "cand": false}, {"id": "CV-022", "en": "arrhythmia", "ab": "", "full": "", "ko": "부정맥", "ipa": "/əˈrɪð.mi.ə/", "comp": [["a-", "접두사", "없음"], ["rhythm/o", "어근(결합형)", "리듬"], ["-ia", "접미사", "상태"]], "de": "심장 박동의 리듬이나 속도가 비정상인 상태", "ctx": "ECG monitoring 중 리듬 변화 시 즉시 notify(처방)", "plain": "심장이 불규칙하게 뛰는 상태", "typ": "증상·징후", "lv": "기본", "ex": "시술 후 심한 arrhythmia 없는지 확인하고 베타차단제 투여해야 합니다.", "memo": "접두사 a- 뒤에서 r이 겹쳐 표기됨", "cand": false}, {"id": "CV-020", "en": "bradycardia", "ab": "", "full": "", "ko": "느린맥(서맥)", "ipa": "/bræd.ɪˈkɑːr.di.ə/", "comp": [["brady-", "접두사", "느린"], ["cardi/o", "어근(결합형)", "심장"], ["-ia", "접미사", "상태"]], "de": "심박동수가 정상보다 느린 상태(성인 분당 60회 미만)", "ctx": "하벽 심근경색증에서 흔함. 베타차단제 투여 전 HR 60회 이상 확인", "plain": "맥박이 느린 상태", "typ": "증상·징후", "lv": "기본", "ex": "bradycardia 발생 시 즉시 보고하겠습니다.", "memo": "", "cand": false}, {"id": "CV-021", "en": "hypotension", "ab": "", "full": "", "ko": "저혈압", "ipa": "/haɪ.poʊˈtɛn.ʃən/", "comp": [["hypo-", "접두사", "아래, 낮은"], ["tens/o", "어근(결합형)", "압력, 긴장"], ["-ion", "접미사", "상태, 과정"]], "de": "혈압이 정상보다 낮은 상태", "ctx": "NTG와 morphine 투여 전후 확인. NTG는 SBP 90 mmHg 이상에서 투여", "plain": "혈압이 낮은 상태", "typ": "증상·징후", "lv": "기본", "ex": "NTG 투여 전 V/S 확인해서 hypotension 아닌지 봐 주세요.", "memo": "", "cand": false}, {"id": "CV-059", "en": "radial artery", "ab": "", "full": "", "ko": "노동맥(요골동맥)", "ipa": "/ˈreɪ.di.əl ˈɑːr.tər.i/", "comp": [["radi/o", "어근(결합형)", "노뼈"], ["-al", "접미사", "~의"]], "de": "손목 엄지 쪽을 지나는 동맥", "ctx": "CAG 접근 부위. 시술 쪽 팔은 채혈과 IV를 피함(Rt arm save)", "plain": "손목에서 맥박이 만져지는 혈관", "typ": "해부·부위", "lv": "심화", "ex": "Rt radial artery 촉지 양호하고 Rt arm save 했습니다.", "memo": "", "cand": false}, {"id": "CV-062", "en": "hematoma", "ab": "", "full": "", "ko": "혈종", "ipa": "/hiː.məˈtoʊ.mə/", "comp": [["hemat/o", "어근(결합형)", "혈액"], ["-oma", "접미사", "종양, 덩어리"]], "de": "혈관 밖으로 나온 피가 조직에 고여 덩어리를 이룬 것", "ctx": "시술 후 천자 부위 합병증(디브리핑 연계)", "plain": "피가 고여 생긴 멍울", "typ": "증상·징후", "lv": "심화", "ex": "천자 부위 bleeding이나 hematoma 없습니다.", "memo": "", "cand": false}, {"id": "CV-047", "en": "intravenous", "ab": "IV", "full": "", "ko": "정맥내", "ipa": "/ɪn.trəˈviː.nəs/", "comp": [["intra-", "접두사", "안"], ["ven/o", "어근(결합형)", "정맥"], ["-ous", "접미사", "~의"]], "de": "정맥 안으로 투여하는 경로", "ctx": "IV line 확보 부위(Lt arm 18G)와 투여 경로 보고", "plain": "혈관(정맥) 주사", "typ": "투약", "lv": "기본", "ex": "Lt arm에 18G IV 확보되어 있습니다.", "memo": "", "cand": false}, {"id": "CV-049", "en": "normal saline", "ab": "N/S", "full": "", "ko": "생리식염수", "ipa": "/ˈnɔːr.məl ˈseɪ.liːn/", "comp": [], "de": "0.9% 염화나트륨 용액", "ctx": "수액 처방(N/S 1 L IV)", "plain": "기본 수액", "typ": "투약", "lv": "기본", "ex": "N/S 1 L IV 연결했습니다.", "memo": "", "cand": false}, {"id": "CV-053", "en": "nasal cannula", "ab": "nasal prong", "full": "", "ko": "코삽입관(비강캐뉼라)", "ipa": "/ˈneɪ.zəl ˈkæn.jə.lə/", "comp": [["nas/o", "어근(결합형)", "코"], ["-al", "접미사", "~의"]], "de": "콧구멍에 걸쳐 저유량 산소를 공급하는 기구", "ctx": "O2 4 L/min 투여 방법", "plain": "코에 거는 산소줄", "typ": "처치·시술", "lv": "기본", "ex": "nasal prong으로 O2 4 L 시작했습니다.", "memo": "시나리오 표기는 nasal prong", "cand": false}, {"id": "CV-054", "en": "nothing by mouth", "ab": "NPO", "full": "nil per os", "ko": "금식", "ipa": "/nɪl pɜːr ɑːs/", "comp": [], "de": "입으로 아무것도 먹지 않도록 하는 처방", "ctx": "시술 전 금식 여부 확인. 저녁 식사로 금식 시간 미확보", "plain": "입으로 아무것도 드시지 않는 것", "typ": "처치·시술", "lv": "기본", "ex": "NPO 유지 안 된 상태라 aspiration 대비가 필요합니다.", "memo": "라틴어 약어. 임상에서는 철자를 읽음", "cand": false}, {"id": "CV-026", "en": "troponin I", "ab": "TnI", "full": "", "ko": "트로포닌 I", "ipa": "/ˈtroʊ.pə.nɪn aɪ/", "comp": [], "de": "심근 손상 시 혈중으로 유리되는 심근 표지자", "ctx": "POCT kit 결과(positive)와 검사실 결과(4.8 ng/mL) 보고", "plain": "심장 근육이 손상되면 피검사에서 올라가는 수치", "typ": "검사", "lv": "기본", "ex": "troponin I POCT 결과 positive입니다.", "memo": "", "cand": false}, {"id": "CV-027", "en": "creatine kinase-MB", "ab": "CK-MB", "full": "", "ko": "크레아틴키나아제-MB", "ipa": "/ˈkriː.ə.tiːn ˈkaɪ.neɪs ɛm biː/", "comp": [], "de": "심근에 주로 분포하는 효소. 심근 손상 시 상승", "ctx": "심근효소 검사 결과 보고(35.2 ng/mL)", "plain": "심장 근육 손상을 보는 또 다른 피검사 수치", "typ": "검사", "lv": "심화", "ex": "troponin과 CK-MB 모두 상승했습니다.", "memo": "", "cand": false}, {"id": "CV-030", "en": "blood urea nitrogen / creatinine", "ab": "BUN/Cr", "full": "", "ko": "혈액요소질소/크레아티닌", "ipa": "/blʌd jʊˈriː.ə ˈnaɪ.trə.dʒən/, /kriˈæt.ə.niːn/", "comp": [], "de": "신장 기능을 반영하는 혈액 검사 수치", "ctx": "조영제 투여 전 신기능 확인. 인계 항목", "plain": "콩팥 기능을 보는 피검사", "typ": "검사", "lv": "기본", "ex": "BUN/Cr 16/1.0으로 정상입니다.", "memo": "", "cand": false}, {"id": "CV-029", "en": "chest posteroanterior view", "ab": "Chest PA, CXR", "full": "", "ko": "가슴 X선(후전 촬영)", "ipa": "/tʃɛst pɑː.stɪr.oʊ.ænˈtɪr.i.ər vjuː/", "comp": [["poster/o", "어근(결합형)", "뒤"], ["anter/o", "어근(결합형)", "앞"], ["-ior", "접미사", "~쪽의"]], "de": "X선을 등에서 가슴 방향으로 투과시켜 찍는 가슴 영상", "ctx": "심비대와 폐울혈 확인. 처방 복창 항목", "plain": "가슴 엑스레이", "typ": "검사", "lv": "기본", "ex": "Chest PA 촬영 처방 확인했습니다.", "memo": "임상에서는 \"체스트 피에이\"로 읽음", "cand": false}, {"id": "CV-041", "en": "antiplatelet agent", "ab": "", "full": "", "ko": "항혈소판제", "ipa": "/æn.tiˈpleɪt.lət ˈeɪ.dʒənt/", "comp": [["anti-", "접두사", "대항"], ["platelet", "단어", "혈소판"]], "de": "혈소판 응집을 억제해 혈전 형성을 막는 약물", "ctx": "aspirin, clopidogrel을 묶어 부르는 약물 분류", "plain": "혈소판이 뭉치지 않게 하는 약", "typ": "투약", "lv": "기본", "ex": "CAG 전 antiplatelet agent 복용시켰습니다.", "memo": "시나리오는 항혈소판제와 항응고제를 묶어 \"항혈전제\"로도 표현", "cand": false}, {"id": "CV-042", "en": "anticoagulant", "ab": "", "full": "", "ko": "항응고제", "ipa": "/æn.ti.koʊˈæɡ.jə.lənt/", "comp": [["anti-", "접두사", "대항"], ["coagul/o", "어근(결합형)", "응고"], ["-ant", "접미사", "~하는 것"]], "de": "응고인자를 억제해 혈전의 성장을 막는 약물", "ctx": "heparin의 약물 분류", "plain": "피가 굳지 않게 하는 약", "typ": "투약", "lv": "기본", "ex": "이송 직전 anticoagulant로 heparin 투여 예정입니다.", "memo": "", "cand": false}, {"id": "CV-043", "en": "heparin", "ab": "", "full": "", "ko": "헤파린", "ipa": "/ˈhɛp.ər.ɪn/", "comp": [], "de": "응고인자를 억제하는 주사용 항응고제", "ctx": "Cath lab 출발 직전 5,000 U IV. aPTT 확인 후 투여", "plain": "피가 굳지 않게 하는 주사약", "typ": "투약", "lv": "기본", "ex": "지금 heparin 5,000 U IV 했습니다.", "memo": "", "cand": false}, {"id": "CV-038", "en": "morphine", "ab": "", "full": "", "ko": "모르핀", "ipa": "/ˈmɔːr.fiːn/", "comp": [], "de": "강한 진통 효과를 가진 마약성 진통제", "ctx": "NTG 무효 시 처방. 투여 전 호흡수와 의식, 혈압 확인", "plain": "강한 진통제(마약성)", "typ": "투약", "lv": "기본", "ex": "morphine 2.5 mg IV 투여했고 NRS 3점으로 감소했습니다.", "memo": "", "cand": false}, {"id": "CV-036", "en": "nitroglycerin", "ab": "NTG", "full": "", "ko": "니트로글리세린", "ipa": "/naɪ.troʊˈɡlɪs.ər.ɪn/", "comp": [], "de": "관상동맥과 정맥을 확장시켜 심근 산소 요구량을 줄이는 질산염 제제", "ctx": "SL로 5분 간격 최대 3회. 투여 전후 혈압 확인", "plain": "심장 혈관을 넓혀 피가 잘 돌게 하는 약", "typ": "투약", "lv": "기본", "ex": "NTG 1T SL, NRS 5점 이상 시 5분 간격 최대 3회, 복창하겠습니다.", "memo": "용량 표기 불일치(환경준비 0.6 mg, 사전학습과 처방지 0.4 mg)", "cand": false}, {"id": "CV-037", "en": "sublingual", "ab": "SL", "full": "", "ko": "혀밑(설하)", "ipa": "/sʌbˈlɪŋ.ɡwəl/", "comp": [["sub-", "접두사", "아래"], ["lingu/o", "어근(결합형)", "혀"], ["-al", "접미사", "~의"]], "de": "혀 밑에 넣어 녹여 흡수시키는 투여 경로", "ctx": "NTG 투여 경로. 씹거나 삼키지 않도록 교육", "plain": "혀 밑에 넣어 녹이는 방법", "typ": "투약", "lv": "기본", "ex": "NTG 1T SL 투여했습니다.", "memo": "", "cand": false}, {"id": "CV-039", "en": "aspirin", "ab": "", "full": "", "ko": "아스피린", "ipa": "/ˈæs.prɪn/", "comp": [], "de": "혈소판 응집을 억제하는 항혈소판제", "ctx": "CAG 전 부하용량을 씹어서 복용", "plain": "피떡이 생기지 않게 하는 약", "typ": "투약", "lv": "기본", "ex": "aspirin 300 mg은 씹어서 복용하시도록 설명했습니다.", "memo": "처방지 철자 \"Asprine\", 본문 \"Asprin\" 수정 필요", "cand": false}, {"id": "CV-040", "en": "clopidogrel", "ab": "", "full": "", "ko": "클로피도그렐", "ipa": "/kloʊˈpɪd.ə.ɡrɛl/", "comp": [], "de": "P2Y12 수용체를 억제하는 항혈소판제", "ctx": "aspirin과 함께 CAG 전 부하용량 투여", "plain": "피떡이 생기지 않게 하는 약", "typ": "투약", "lv": "심화", "ex": "clopidogrel 600 mg PO 투여했습니다.", "memo": "", "cand": false}, {"id": "CV-048", "en": "by mouth", "ab": "PO", "full": "per os", "ko": "경구", "ipa": "/pɜːr ɑːs/", "comp": [], "de": "입으로 삼켜 투여하는 경로", "ctx": "항혈소판제 투여 경로", "plain": "먹는 약", "typ": "투약", "lv": "기본", "ex": "clopidogrel 600 mg PO, 복창하겠습니다.", "memo": "라틴어 약어. 발음은 원어 기준", "cand": false}, {"id": "CV-044", "en": "loading dose", "ab": "", "full": "", "ko": "부하용량", "ipa": "/ˈloʊ.dɪŋ doʊs/", "comp": [], "de": "약효를 빨리 얻기 위해 처음에 투여하는 많은 용량", "ctx": "aspirin 300 mg, clopidogrel 600 mg은 유지용량보다 많은 부하용량", "plain": "처음에 한 번 많이 쓰는 용량", "typ": "투약", "lv": "심화", "ex": "aspirin과 clopidogrel loading dose 투여했습니다.", "memo": "", "cand": false}, {"id": "CV-045", "en": "beta-blocker", "ab": "", "full": "", "ko": "베타차단제", "ipa": "/ˈbeɪ.tə ˈblɑː.kər/", "comp": [], "de": "교감신경 베타 수용체를 차단해 심박수와 심근 수축력을 낮추는 약물", "ctx": "시술 후 carvedilol 처방. SBP 100 mmHg 이상, HR 60회 이상 확인 후 투여", "plain": "심장이 덜 힘들게 맥박과 혈압을 낮추는 약", "typ": "투약", "lv": "심화", "ex": "시술 후 beta-blocker 투여 처방 있습니다. V/S 안정 확인 후 투여해야 합니다.", "memo": "", "cand": false}, {"id": "CV-011", "en": "hypertension", "ab": "HTN", "full": "", "ko": "고혈압", "ipa": "/haɪ.pərˈtɛn.ʃən/", "comp": [["hyper-", "접두사", "위, 과다"], ["tens/o", "어근(결합형)", "압력, 긴장"], ["-ion", "접미사", "상태, 과정"]], "de": "혈압이 정상보다 높은 상태", "ctx": "과거력 보고(Background). 진단 후 약물 미복용", "plain": "혈압이 높은 병", "typ": "진단", "lv": "기본", "ex": "HTN, hyperlipidemia 진단받았으나 약은 복용하지 않았다고 합니다.", "memo": "", "cand": false}, {"id": "CV-013", "en": "hyperlipidemia", "ab": "", "full": "", "ko": "고지질혈증(고지혈증)", "ipa": "/haɪ.pər.lɪp.ɪˈdiː.mi.ə/", "comp": [["hyper-", "접두사", "위, 과다"], ["lipid/o", "어근(결합형)", "지질"], ["-emia", "접미사", "혈액 상태"]], "de": "혈중 지질 농도가 높은 상태", "ctx": "과거력 보고. 건강검진에서 진단, 약물 미복용", "plain": "피 속에 기름기가 많은 상태", "typ": "진단", "lv": "기본", "ex": "건강검진에서 hyperlipidemia 진단받았으나 약물 복용은 하지 않았습니다.", "memo": "", "cand": false}, {"id": "CV-058", "en": "contrast medium", "ab": "", "full": "", "ko": "조영제", "ipa": "/ˈkɑːn.træst ˈmiː.di.əm/", "comp": [], "de": "영상에서 혈관이나 장기가 잘 보이도록 주입하는 약물", "ctx": "알레르기 유무와 신기능(BUN/Cr) 확인. 주입 시 화끈거림 설명", "plain": "혈관이 잘 보이게 넣는 약", "typ": "처치·시술", "lv": "기본", "ex": "조영제 알레르기 없고 BUN/Cr 정상입니다.", "memo": "", "cand": false}, {"id": "CV-010", "en": "ischemia", "ab": "", "full": "", "ko": "허혈", "ipa": "/ɪˈskiː.mi.ə/", "comp": [["isch/o", "어근(결합형)", "억제, 막힘"], ["-emia", "접미사", "혈액 상태"]], "de": "조직으로 가는 혈류가 부족한 상태", "ctx": "가역적 단계. 지속되면 경색으로 진행. ST 하강은 허혈 소견", "plain": "피가 충분히 가지 못하는 상태", "typ": "증상·징후", "lv": "기본", "ex": "monitor상 ST depression 있어 myocardial ischemia 소견으로 보입니다.", "memo": "대본의 \"heart ischemic sign\"은 형용사형 ischemic", "cand": false}, {"id": "CV-064", "en": "notify", "ab": "noti", "full": "", "ko": "보고(알림)", "ipa": "/ˈnoʊ.tə.faɪ/", "comp": [], "de": "환자 상태 변화를 의사에게 알리는 것", "ctx": "국내 임상 통용 표현. 처방에도 \"리듬 변화 시 즉시 Notify\"로 표기", "plain": "의사에게 알리는 것", "typ": "사정·보고 도구", "lv": "기본", "ex": "저는 심장내과 선생님께 notify 할 테니 patient monitoring 해 주세요.", "memo": "", "cand": false}, {"id": "후보-01", "en": "right coronary artery", "ab": "RCA", "full": "", "ko": "오른관상동맥(우관상동맥)", "ipa": "", "comp": [["coron/o", "어근(결합형)", "관상동맥"], ["-ary", "접미사", "~의"]], "de": "심장의 오른쪽과 아래벽에 혈액을 공급하는 관상동맥", "ctx": "하벽 심근경색증의 주된 폐색 혈관. 시술 부위 인계 시 사용", "plain": "심장 오른쪽을 먹여 살리는 혈관", "typ": "해부·부위", "lv": "기본", "ex": "", "memo": "", "cand": true}, {"id": "후보-02", "en": "stent", "ab": "", "full": "", "ko": "스텐트", "ipa": "", "comp": [], "de": "좁아진 혈관을 넓힌 뒤 다시 좁아지지 않도록 넣는 그물망 관", "ctx": "PCI에서 삽입한 개수와 혈관을 함께 인계", "plain": "혈관을 받쳐 주는 금속 그물망", "typ": "처치·시술", "lv": "기본", "ex": "", "memo": "", "cand": true}, {"id": "후보-03", "en": "puncture site", "ab": "", "full": "", "ko": "천자 부위", "ipa": "", "comp": [], "de": "시술을 위해 바늘이나 카테터를 넣은 자리", "ctx": "시술 후 출혈과 혈종, 말초 순환을 관찰하는 부위", "plain": "시술할 때 관을 넣은 자리", "typ": "해부·부위", "lv": "기본", "ex": "", "memo": "", "cand": true}, {"id": "후보-04", "en": "bleeding", "ab": "", "full": "", "ko": "출혈", "ipa": "", "comp": [], "de": "혈관 밖으로 피가 나오는 것", "ctx": "항혈소판제와 항응고제 투여 후 주의할 위험", "plain": "피가 나는 것", "typ": "증상·징후", "lv": "기본", "ex": "", "memo": "", "cand": true}, {"id": "후보-05", "en": "bed rest", "ab": "BR", "full": "", "ko": "침상안정", "ipa": "", "comp": [], "de": "침대에서 안정을 취하도록 하는 처방", "ctx": "활동 범위 인계. 낙상 위험과 연결", "plain": "침대에서 쉬는 것", "typ": "처치·시술", "lv": "기본", "ex": "", "memo": "", "cand": true}, {"id": "후보-06", "en": "atrioventricular block", "ab": "AV block", "full": "", "ko": "방실차단", "ipa": "", "comp": [["atri/o", "어근(결합형)", "심방"], ["ventricul/o", "어근(결합형)", "심실"], ["-ar", "접미사", "~의"]], "de": "심방에서 심실로 가는 전기 신호가 지연되거나 끊기는 부정맥", "ctx": "하벽 심근경색증에서 동반될 수 있어 리듬 관찰 항목으로 인계", "plain": "심장 위아래 사이 전기 신호가 막히는 것", "typ": "증상·징후", "lv": "심화", "ex": "", "memo": "", "cand": true}, {"id": "후보-07", "en": "coronary care unit", "ab": "CCU", "full": "", "ko": "심장집중치료실", "ipa": "", "comp": [["coron/o", "어근(결합형)", "관상동맥"], ["-ary", "접미사", "~의"]], "de": "급성 심장질환 환자를 집중 관찰하고 치료하는 병동", "ctx": "전동 예정 부서", "plain": "심장 환자 중환자실", "typ": "처치·시술", "lv": "기본", "ex": "", "memo": "", "cand": true}, {"id": "후보-08", "en": "intake and output", "ab": "I&O", "full": "", "ko": "섭취량과 배설량", "ipa": "", "comp": [], "de": "일정 시간 동안 몸에 들어간 양과 나온 양의 기록", "ctx": "조영제 배출을 위한 수액 유지와 함께 확인", "plain": "먹고 마신 양과 소변으로 나온 양", "typ": "검사", "lv": "기본", "ex": "", "memo": "", "cand": true}, {"id": "후보-09", "en": "follow-up", "ab": "f/u", "full": "", "ko": "추적 검사(추적 관찰)", "ipa": "", "comp": [], "de": "일정 시간 뒤 다시 검사하거나 관찰하는 것", "ctx": "심근효소, 신기능 재검 일정 인계", "plain": "다시 확인하는 검사", "typ": "검사", "lv": "기본", "ex": "", "memo": "", "cand": true}, {"id": "후보-10", "en": "sinus rhythm", "ab": "", "full": "", "ko": "굴리듬(동리듬)", "ipa": "", "comp": [], "de": "동결절에서 시작되는 정상 심장 리듬", "ctx": "monitor 리듬 보고", "plain": "정상적인 심장 박동", "typ": "검사", "lv": "심화", "ex": "", "memo": "", "cand": true}, {"id": "후보-11", "en": "pack-year", "ab": "", "full": "", "ko": "갑년", "ipa": "", "comp": [], "de": "하루 흡연 갑 수에 흡연 연수를 곱한 흡연량 단위", "ctx": "흡연력 인계(하루 1갑 × 30년 = 30갑년)", "plain": "담배를 얼마나 피웠는지 나타내는 단위", "typ": "사정·보고 도구", "lv": "심화", "ex": "", "memo": "", "cand": true}], "pairs": [{"a": "hypertension", "b": "hypotension", "diff": "hyper-(높은) / hypo-(낮은)", "point": "과거력은 고혈압, NTG·morphine 투여 후 주의할 것은 저혈압"}, {"a": "ST depression", "b": "ST elevation", "diff": "—", "point": "내원 시 ST 하강(허혈) → Phase 2에서 ST 상승(경색). 시나리오의 핵심 변화"}, {"a": "ischemia", "b": "myocardial infarction", "diff": "isch/o(막힘) / infarct/o(경색)", "point": "허혈은 혈류 부족(가역적), 경색은 조직 괴사(비가역적)"}, {"a": "coronary angiography", "b": "percutaneous coronary intervention", "diff": "-graphy(촬영법) / intervention(중재)", "point": "CAG는 혈관을 찍어 보는 검사, PCI는 넓히는 시술"}, {"a": "electrocardiogram", "b": "coronary angiography", "diff": "-gram(기록물) / -graphy(기록하는 방법)", "point": "접미사 의미 차이. 검사 대상도 전기 신호와 혈관으로 다름"}, {"a": "antiplatelet agent", "b": "anticoagulant", "diff": "platelet(혈소판) / coagul/o(응고)", "point": "aspirin·clopidogrel은 항혈소판제, heparin은 항응고제"}, {"a": "sublingual", "b": "by mouth", "diff": "—", "point": "SL은 혀 밑에서 녹임(NTG), PO는 삼킴(clopidogrel). aspirin 부하용량은 씹어서 복용"}, {"a": "hyperlipidemia", "b": "ischemia", "diff": "-emia(혈액 상태)", "point": "같은 접미사. 혈중 지질 과다 / 혈류 부족"}]};
 const TERMS = DATA.terms, PAIRS = DATA.pairs;
-
-const PATIENT = {
-  head: "심근식 (M/58)", reg: "44100006", dx: "inferior STEMI", loc: "응급실 · CCU 병상 대기", dr: "심장내과 나최고",
-  vitals: [["BP","118/72","mmHg"],["HR","78","회/분"],["RR","18","회/분"],["BT","36.7","℃"],["SpO2","98","%"],["NRS","1","점"]],
-  now: [
-    ["의식","alert",false],
-    ["ECG","post-PCI 12-lead ECG에서 II·III·aVF ST 상승 감소. monitor상 sinus rhythm, arrhythmia 없음",true],
-    ["천자 부위","Rt radial artery. 압박지혈대 적용 중. bleeding, hematoma 없음. 손가락 색·온도·감각 양호",true],
-    ["수액·산소","Lt arm 18G, N/S 1 L IV 유지. O2 4 L/min nasal prong",false],
-    ["식이·활동","NPO(except med.), bed rest",false],
-    ["검사","troponin I 4.8 ng/mL, CK-MB 35.2 ng/mL, BUN/Cr 16/1.0 mg/dL, aPTT 33초(heparin 투여 전)",false],
-    ["미수행 처방","carvedilol 3.125 mg PO (SBP 100 이상, HR 60회 이상, post-PCI ECG 확인 후)",false],
-    ["예정","CCU 병상 배정 시 전동, 심근효소 추적 검사",true],
-    ["알레르기","없음",false]
-  ],
-  bg: [
-    ["과거력","HTN, hyperlipidemia (진단 후 약물 미복용)"],
-    ["흡연","하루 1갑 × 30년"],
-    ["선행 증상","2개월 전부터 계단 오를 때 chest discomfort, 휴식 시 호전"]
-  ],
-  timeline: [
-    ["20:00","외식 후 귀가 중 쥐어짜는 흉통, 식은땀, 호흡곤란 발생"],
-    ["20:20","119로 응급실 내원. V/S 135/90-108-24-36.5, SpO2 95%, NRS 8점, monitor상 ST 하강"],
-    ["20:25","NTG SL, O2 4 L/min, N/S 1 L IV, 12-lead ECG, troponin I POCT, 응급 lab, Chest PA 처방"],
-    ["20:35","NTG 2회 투여에도 NRS 7~8점. troponin I POCT 양성, II·III·aVF ST 상승"],
-    ["20:40","morphine 2.5 mg IV, aspirin 300 mg + clopidogrel 600 mg PO. 이후 NRS 3점"],
-    ["20:50","heparin 5,000 U IV 후 Cath lab 이송"],
-    ["21:40","primary PCI 종료. Rt radial 접근, RCA에 stent 1개 삽입"],
-    ["21:50","응급실 복귀. post-PCI 12-lead ECG, Chest PA(portable) 시행"],
-    ["22:30","evening → night 교대 인수인계 (지금)"]
-  ]
-};
 const STAGES = [
   {k:"P", l:"P", n:"Patient", ko:"환자 확인", what:"이름·나이·성별, 진단명, 현재 위치와 대기 사유",
    terms:["inferior","STEMI","PCI","CCU"], ask:"진단명이 정확히 뭐였죠?",
@@ -336,131 +471,202 @@ const STAGES = [
    model:"V/S와 puncture site 계속 관찰해 주세요. carvedilol 3.125 mg은 아직 투여 전입니다. SBP 100 이상, HR 60회 이상이고 주치의가 post-PCI ECG 확인한 뒤 투여해 주세요. 수액 유지하면서 I&O check 부탁드립니다. chest pain 재발하거나 리듬 변화 있으면 12-lead ECG 찍고 바로 notify 해 주세요. CCU 병상 나면 전동 예정입니다."}
 ];
 
-/* 음성 인식이 한글로 받아 적는 형태까지 포함한 용어 표기 (용어 사용 집계용) */
-const SAY = {
-  "ST-segment elevation myocardial infarction":["stemi","스테미"],
-  "myocardial infarction":["심근경색","mi"],
-  "percutaneous coronary intervention":["pci","피씨아이","피시아이"],
-  "coronary angiography":["cag","씨에이지","캐그","관상동맥조영"],
-  "alert":["alert","얼러트","알러트","얼럿"],
-  "vital signs":["v/s","vs","바이탈"],
-  "oxygen saturation":["spo2","에스피오투","산소포화도","새츄레이션"],
-  "numeric rating scale":["nrs","엔알에스"],
-  "chest pain":["chestpain","체스트페인","흉통","가슴통증"],
-  "chest discomfort":["discomfort","디스컴포트","가슴불편"],
-  "acute":["acute","어큐트","급성"],
-  "dyspnea":["dyspnea","디스니아","디스프니아","호흡곤란"],
-  "electrocardiogram":["ecg","ekg","이씨지","이시지","이케이지","심전도"],
-  "ST elevation":["stelevation","에스티엘리베이션","에스티엘레베이션","st상승","에스티상승"],
-  "ST depression":["stdepression","에스티디프레션","st하강","에스티하강"],
-  "arrhythmia":["arrhythmia","어리듬미아","어리스미아","부정맥"],
-  "bradycardia":["bradycardia","브라디","서맥","느린맥"],
-  "hypotension":["hypotension","하이포텐션","저혈압"],
-  "radial artery":["radial","레디얼","레이디얼","요골","노동맥"],
-  "hematoma":["hematoma","헤마토마","혈종"],
-  "intravenous":["정맥주사","아이브이"],
-  "normal saline":["n/s","노말셀라인","노멀셀라인","생리식염수"],
-  "nasal cannula":["nasal","나잘","네이절","프롱","캐뉼라"],
-  "nothing by mouth":["npo","엔피오","금식"],
-  "troponin I":["troponin","트로포닌","트로포닌아이"],
-  "creatine kinase-MB":["ckmb","ck-mb","씨케이엠비"],
-  "blood urea nitrogen / creatinine":["bun","비유엔","크레아티닌","creatinine"],
-  "chest posteroanterior view":["chestpa","체스트피에이","흉부엑스레이","cxr"],
-  "antiplatelet agent":["antiplatelet","항혈소판"],
-  "anticoagulant":["anticoagulant","항응고"],
-  "heparin":["heparin","헤파린"],
-  "morphine":["morphine","모르핀","몰핀"],
-  "nitroglycerin":["ntg","엔티지","니트로"],
-  "sublingual":["sublingual","설하","혀밑"],
-  "aspirin":["aspirin","아스피린"],
-  "clopidogrel":["clopidogrel","클로피도그렐","플라빅스"],
-  "by mouth":["경구"],
-  "loading dose":["loading","로딩"],
-  "beta-blocker":["betablocker","베타블로커","베타차단","carvedilol","카베딜롤","카르베딜롤"],
-  "hypertension":["htn","hypertension","하이퍼텐션","고혈압"],
-  "hyperlipidemia":["hyperlipidemia","하이퍼리피디미아","고지혈","고지질"],
-  "contrast medium":["조영제","contrast"],
-  "ischemia":["ischemia","이스키미아","허혈"],
-  "notify":["noti","노티","notify"],
-  "right coronary artery":["rca","알씨에이"],
-  "stent":["stent","스텐트"],
-  "puncture site":["puncture","펑처","천자"],
-  "bleeding":["bleeding","블리딩","출혈"],
-  "bed rest":["bedrest","베드레스트","침상안정"],
-  "atrioventricular block":["avblock","에이브이블록","방실차단"],
-  "coronary care unit":["ccu","씨씨유"],
-  "intake and output":["i&o","i/o","아이앤오","아이엔오","섭취량","배설량"],
-  "follow-up":["f/u","팔로업","추적검사"],
-  "sinus rhythm":["sinus","사이너스","동리듬","굴리듬"],
-  "inferior":["inferior","인피리어","하벽"]
-};
+/* 인사·마무리 모범 발화 */
+STAGES[STAGES.length - 1].model += " 이상입니다. 혹시 궁금한 점 있으세요?";
+const OPEN = { k: "G", l: "인사", n: "Greeting", ko: "인사", what: "서로 인사하고 근무조와 인계 시작을 알리기", terms: [], items: ["인사", "인계 시작 알림"],
+  model: "안녕하세요, 선생님. 이브닝 번 인계드리겠습니다." };
+const NIGHT_GREET = "안녕하세요, 선생님. 이브닝 근무 수고 많으셨어요. 인계 부탁드립니다.";
+const QA = { k: "Q", l: "Q&A", n: "Question", ko: "궁금한 점 확인", what: "인계를 마치며 궁금한 점이 있는지 묻기", items: ["궁금한 점 확인"] };
+const ALLSTAGES = [OPEN, ...STAGES, QA];
 
-/* ---------- 공통 ---------- */
-const $ = id => document.getElementById(id);
-const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
-const norm = s => (s || "").toLowerCase().replace(/[\s.,·…!?~"'“”‘’()\[\]-]/g, "");
-const ALIAS = {"STEMI":"ST-segment elevation myocardial infarction","PCI":"percutaneous coronary intervention","CAG":"coronary angiography","V/S":"vital signs","SpO2":"oxygen saturation","NRS":"numeric rating scale","ECG":"electrocardiogram","IV":"intravenous","N/S":"normal saline","nasal prong":"nasal cannula","NPO":"nothing by mouth","HTN":"hypertension","NTG":"nitroglycerin","SL":"sublingual","PO":"by mouth","CK-MB":"creatine kinase-MB","BUN/Cr":"blood urea nitrogen / creatinine","Chest PA":"chest posteroanterior view","RCA":"right coronary artery","CCU":"coronary care unit","AV block":"atrioventricular block","I&O":"intake and output","f/u":"follow-up"};
-const findTerm = label => TERMS.find(t => t.en === (ALIAS[label] || label));
+const MON = { bp: "118/72", hr: "78", rr: "18", bt: "36.7", sp: "98", nrs: "1" };
+const SUMMARY = [
+  ["환자", "심근식 (M/58) · 등록번호 44100006 · 173 cm / 90 kg"],
+  ["진단명", "inferior STEMI (내원 시 suspected unstable angina)"],
+  ["주치의", "심장내과 나최고"],
+  ["위치", "응급실 · CCU 병상 대기", true],
+  ["시술", "primary PCI · Rt radial 접근 · RCA stent 1개", true],
+  ["주호소", "chest pain (짓누르는 듯한 느낌, 명치 위쪽과 턱 아래로 방사)"],
+  ["과거력", "HTN, hyperlipidemia (진단 후 약물 미복용)"],
+  ["생활력", "흡연 하루 1갑 × 30년 · 음주 · 최근 3개월 잦은 야근"],
+  ["가족력", "모: DM, hyperlipidemia · 부: HTN"],
+  ["알레르기", "없음"],
+  ["의식", "alert"],
+  ["ECG", "post-PCI 12-lead ECG에서 II·III·aVF ST 상승 감소. sinus rhythm, arrhythmia 없음", true],
+  ["천자 부위", "Rt radial artery · 압박지혈대 · bleeding, hematoma 없음 · 손가락 색·온도·감각 양호", true],
+  ["라인·산소", "Lt arm 18G · N/S 1 L IV · O2 4 L/min nasal prong"],
+  ["식이·활동", "NPO(except med.) · bed rest"],
+  ["미수행 처방", "carvedilol 3.125 mg PO (SBP 100 이상, HR 60회 이상, post-PCI ECG 확인 후)"]
+];
+const TIMELINE = [
+  { t: "20:00", h: "흉통 발생", d: "외식 후 귀가 중 쥐어짜는 흉통, 식은땀, 호흡곤란. 쉬어도 호전 없어 119 호출" },
+  { t: "20:20", h: "응급실 도착", d: "mental alert. SAMPLE·OPQRST 사정, patient monitor 부착", v: ["BP 135/90", "HR 108", "RR 24", "BT 36.5", "SpO2 95%", "NRS 8", "ST 하강"] },
+  { t: "20:25", h: "1차 SBAR 보고 · 처방", d: "NTG SL PRN, O2 4 L/min, N/S 1 L IV, 12-lead ECG, troponin I POCT, 응급 lab, Chest PA" },
+  { t: "20:35", h: "상태 악화 · 재보고", key: true, d: "NTG 2회에도 통증 지속. troponin I POCT 양성, II·III·aVF ST 상승 → inferior STEMI", v: ["BP 140/90", "HR 106", "RR 24", "BT 36.6", "SpO2 94%", "NRS 7~8", "ST 상승"] },
+  { t: "20:40", h: "추가 처방 수행", d: "morphine 2.5 mg IV, aspirin 300 mg + clopidogrel 600 mg PO, CAG 준비", v: ["BP 120/70", "HR 92", "RR 22", "BT 36.6", "SpO2 97%", "NRS 3"] },
+  { t: "20:50", h: "Cath lab 이송", d: "동의서·알레르기·금식 확인, Rt arm save, Cath lab SBAR 인계, heparin 5,000 U IV 후 이송" },
+  { t: "21:40", h: "primary PCI 종료", key: true, d: "Rt radial 접근, RCA에 stent 1개 삽입", as: true },
+  { t: "21:50", h: "응급실 복귀", d: "post-PCI 12-lead ECG, Chest PA(portable) 시행. CCU 병상 대기", as: true },
+  { t: "22:30", h: "교대 인수인계 (지금)", key: true, d: "이브닝 → 나이트", v: ["BP 118/72", "HR 78", "RR 18", "BT 36.7", "SpO2 98%", "NRS 1"], as: true }
+];
+const ORDERS = [
+  ["Check V/S q1hr", "done", ""], ["Diet: NPO (except med.)", "done", ""], ["Bed rest", "done", ""],
+  ["ECG monitoring", "done", "리듬 변화 시 즉시 notify"], ["ECG 12-lead", "done", ""], ["ECG 12-lead post CAG", "done", ""],
+  ["Chest PA", "done", ""], ["Chest PA (portable) post CAG", "done", ""],
+  ["O2 inhalation 4 L/min via nasal prong", "done", ""], ["N/S 1 L IV infusion", "done", "Lt arm 18G"],
+  ["PRN) NTG 0.4 mg 1T SL", "done", "chest pain NRS 5점 이상, 5분 간격 최대 3회 · 2회 투여함"],
+  ["Morphine 2.5 mg IV", "done", "구두처방"],
+  ["Aspirin 100 mg 3T PO (씹어서)", "done", "부하용량 300 mg"], ["Clopidogrel 75 mg 8T PO", "done", "부하용량 600 mg"],
+  ["Heparin 5,000 U IV", "done", "aPTT 확인 후, CAG room 출발 직전"],
+  ["Carvedilol 25 mg 0.125T PO", "wait", "3.125 mg · SBP 100 이상, HR 60회 이상, post-PCI 12-lead ECG 확인 후"],
+  ["Troponin I POCT kit", "done", ""], ["emergency CBC · electrolyte · chemistry (LFT, BUN, Cr)", "done", ""],
+  ["BT / PT / aPTT", "done", ""], ["CK-MB", "done", ""], ["Emergency coronary angiography (CAG)", "done", "PCI 시행"], ["Rt arm save", "done", ""]
+];
+const MEDS = [
+  ["20:30", "NTG 0.4 mg SL", "투여 전 BP 135/90 확인", "효과 없음"],
+  ["20:35", "NTG 0.4 mg SL (2회)", "", "NRS 7~8 지속"],
+  ["20:40", "Morphine 2.5 mg IV", "투여 전 RR·의식 확인", "NRS 3으로 감소"],
+  ["20:42", "Aspirin 300 mg PO", "씹어서 복용 교육", ""],
+  ["20:42", "Clopidogrel 600 mg PO", "소량의 물과 복용", ""],
+  ["20:50", "Heparin 5,000 U IV", "aPTT 33초 확인, 이송 직전", ""],
+  ["—", "Carvedilol 3.125 mg PO", "투여 전 (조건 확인 필요)", ""]
+];
+const LABS = [
+  ["Cardiac enzyme"], ["Troponin I", "4.8 ng/mL", "문서 표기 0.004", "H"], ["CK-MB", "35.2 ng/mL", "0~5.0", "H"],
+  ["CBC"], ["WBC", "11,200 /μL", "4,000~10,000", "H"], ["Hb", "14.2 g/dL", "13.0~17.0"], ["Hct", "43 %", "39~51"], ["Platelet", "240,000 /μL", "150,000~450,000"],
+  ["Electrolyte"], ["Na", "140 mEq/L", "135~145"], ["K", "4.2 mEq/L", "3.5~5.0"], ["Cl", "102 mEq/L", "96~106"],
+  ["LFT"], ["AST", "55 IU/L", "0~40", "H"], ["ALT", "38 IU/L", "0~40"], ["T. bilirubin", "0.8 mg/dL", "0.6~1.2"],
+  ["Renal"], ["BUN", "16 mg/dL", "8~20"], ["Cr", "1.0 mg/dL", "0.6~1.2"],
+  ["Coagulation"], ["BT", "6 분", "1~4 (Duke)", "H"], ["PT (INR)", "0.9", "0.85~1.15"], ["aPTT", "33 초", "25~35"]
+];
+const NURSING = [
+  ["도착 · 확인", ["손위생, 자기소개, 이름·생년월일로 환자 확인", "patient monitor(ECG, NIBP, SpO2) 부착, ECG 리듬 관찰"]],
+  ["SAMPLE", ["S: 명치 부위가 답답하고 짓누르는 느낌", "A: 없음", "M: 복용 약 없음", "P: HTN, hyperlipidemia 진단(약 미복용)", "L: 저녁 7시 삼겹살", "E: 회식 후 귀가 중 발생, 최근 야근 잦음"]],
+  ["OPQRST", ["O: 20:00경 귀가 중", "P: 쉬어도 계속 아픔", "Q: 짓누르는 듯한 통증", "R: 명치 위쪽과 턱 아래", "S: NRS 8점", "T: 지속"]],
+  ["처치", ["O2 4 L/min nasal prong 시작", "Lt arm 18G IV 확보, N/S 1 L, 채혈", "NTG 투여 전 BP 확인, 5분 뒤 통증 재사정", "morphine 투여 전 호흡수·의식 확인"]],
+  ["의사소통", ["1차 SBAR 보고(20:25), 재보고(20:35)", "구두처방 복창", "aspirin은 씹어서, clopidogrel은 소량의 물과 복용하도록 설명"]],
+  ["CAG 전처치", ["동의서: 주치의가 설명 후 받음", "조영제 알레르기 없음, BUN/Cr 정상 확인", "저녁 7시 식사로 금식 미확보 → aspiration 위험, suction 준비 인계", "Rt radial·dorsalis pedis artery 촉지 양호, Rt arm save", "Cath lab 간호사에게 SBAR 인계, heparin 투여 후 이송"]],
+  ["시술 후 (가정)", ["V/S와 puncture site 관찰", "압박지혈대 유지, bleeding·hematoma 없음", "손가락 색·온도·감각 확인", "post-PCI 12-lead ECG, Chest PA(portable) 시행"]]
+];
 
-/* ---------- 2. 음성 ---------- */
+/* ---------- 2. 읽기 사전 (의료진이 실제로 읽는 방식) ---------- */
+const READ_KO = [
+  [/V\/S와/g, "바이탈 사인과"], [/V\/S랑/g, "바이탈 사인이랑"], [/V\/S는/g, "바이탈 사인은"], [/V\/S가/g, "바이탈 사인이"], [/V\/S를/g, "바이탈 사인을"], [/V\/S/g, "바이탈 사인"], [/SpO2/g, "에스피오투"], [/\bO2\b/g, "오투"],
+  [/(\d+)\s*L\/min/g, "$1리터"], [/(\d+)\s*L\b/g, "$1리터"],
+  [/NSTEMI/g, "엔스테미"], [/STEMI/g, "스테미"], [/\bMI\b/g, "엠아이"],
+  [/post-PCI/g, "포스트 피씨아이"], [/primary PCI/g, "프라이머리 피씨아이"], [/PCI/g, "피씨아이"], [/CAG/g, "씨에이지"], [/RCA/g, "알씨에이"], [/CCU/g, "씨씨유"],
+  [/12-lead/g, "트웰브 리드"], [/\bECG\b/g, "이씨지"], [/\bEKG\b/g, "이케이지"],
+  [/\bII, III, aVF\b/g, "투, 쓰리, 에이브이에프"], [/aVF/g, "에이브이에프"],
+  [/ST elevation/g, "에스티 엘리베이션"], [/ST depression/g, "에스티 디프레션"], [/\bST\b/g, "에스티"],
+  [/NTG/g, "엔티지"], [/\bSL\b/g, "에스엘"], [/\bIV\b/g, "아이브이"], [/\bPO\b/g, "피오"], [/\bPRN\b/g, "피알엔"], [/NPO/g, "엔피오"],
+  [/N\/S/g, "노말 셀라인"], [/(\d+)G\b/g, "$1게이지"],
+  [/HTN/g, "에이치티엔"], [/\bDM\b/g, "디엠"], [/CK-MB/g, "씨케이 엠비"], [/BUN\/Cr/g, "비유엔 크레아티닌"], [/aPTT/g, "에이피티티"],
+  [/I&O/g, "아이 앤 오"], [/f\/u/g, "팔로업"], [/\bnoti\b/g, "노티"], [/notify/g, "노티"], [/\bNRS\b/g, "엔알에스"],
+  [/\bRt\b/g, "라이트"], [/\bLt\b/g, "레프트"], [/AV block/g, "에이브이 블록"],
+  [/mental alert/g, "멘탈 얼러트"], [/\balert\b/g, "얼러트"], [/chest pain/g, "체스트 페인"], [/chest discomfort/g, "체스트 디스컴포트"],
+  [/inferior/g, "인피리어"], [/puncture site/g, "펑처 사이트"], [/radial artery/g, "레디얼 아터리"], [/\bradial\b/g, "레디얼"],
+  [/hematoma/g, "헤마토마"], [/bleeding/g, "블리딩"], [/arrhythmia/g, "어리드미아"], [/sinus rhythm/g, "사이너스 리듬"], [/monitor/g, "모니터"],
+  [/nasal prong/g, "나잘 프롱"], [/bed rest/g, "베드 레스트"], [/dyspnea/g, "디스니아"], [/acute/g, "어큐트"],
+  [/troponin I/g, "트로포닌 아이"], [/troponin/g, "트로포닌"], [/stent/g, "스텐트"], [/allergy/g, "알러지"], [/loading/g, "로딩"],
+  [/morphine/g, "모르핀"], [/aspirin/g, "아스피린"], [/clopidogrel/g, "클로피도그렐"], [/heparin/g, "헤파린"], [/carvedilol/g, "카르베딜롤"],
+  [/bradycardia/g, "브래디카디아"], [/hypotension/g, "하이포텐션"], [/hyperlipidemia/g, "하이퍼리피데미아"], [/Chest PA/g, "체스트 피에이"], [/portable/g, "포터블"],
+  [/beta-blocker/g, "베타 블로커"], [/check/g, "체크"], [/positive/g, "파지티브"], [/(\d{2,3})\/(\d{2,3})/g, "$1에 $2"], [/(\d+)\/(\d+\.\d+)/g, "$1에 $2"], [/\barm\b/g, "암"], [/\bsave\b/g, "세이브"], [/\bSBP\b/g, "에스비피"], [/\bHR\b/g, "에이치알"], [/\bBP\b/g, "비피"], [/\bRR\b/g, "알알"], [/\bBT\b/g, "비티"], [/\bLab\b/gi, "랩"],
+  [/(\d[\d,.]*)\s*mg\b/g, "$1 밀리그램"], [/(\d[\d,]*)\s*U\b/g, "$1 유닛"], [/(\d+)\s*%/g, "$1 퍼센트"], [/mmHg/g, ""], [/℃/g, "도"]
+];
+const READ_EN = { "V/S":"vital sign", "SpO2":"S P O 2", "O2":"O 2", "STEMI":"stemmy", "NSTEMI":"N stemmy", "N/S":"normal saline", "I&O":"I and O", "f/u":"follow up",
+  "BUN/Cr":"B U N, creatinine", "CK-MB":"C K, M B", "Chest PA":"chest P A", "noti":"notify", "nasal prong":"nasal prong", "AV block":"A V block", "TnI":"troponin I", "ECG":"E C G", "EKG":"E K G" };
+const toKo = s => READ_KO.reduce((a, [re, rep]) => a.replace(re, rep), s);
+
 const Voice = (() => {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   const canListen = !!SR && window.isSecureContext;
   const canSpeak = "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined";
-  let rec = null, listening = false, finalText = "", onUpdate = null, onStop = null, stoppedByUser = false;
-  let voices = [];
-  function loadVoices() { try { voices = speechSynthesis.getVoices() || []; } catch (_) { voices = []; } }
-  if (canSpeak) { loadVoices(); try { speechSynthesis.onvoiceschanged = loadVoices; } catch (_) {} }
-  const pick = lang => voices.find(v => v.lang === lang && /google|yuna|siri|premium|enhanced/i.test(v.name)) || voices.find(v => v.lang === lang) || voices.find(v => (v.lang || "").startsWith(lang.slice(0, 2)));
+  let voices = [], rec = null, listening = false, finalText = "", onUpd = null, onStop = null, byUser = false, token = 0;
+  const load = () => { try { voices = speechSynthesis.getVoices() || []; } catch (_) { voices = []; } };
+  if (canSpeak) { load(); try { speechSynthesis.onvoiceschanged = load; } catch (_) {} }
+  const pick = lang => voices.find(v => v.lang === lang && /google|yuna|siri|premium|enhanced|natural/i.test(v.name)) || voices.find(v => v.lang === lang) || voices.find(v => (v.lang || "").replace("_", "-").startsWith(lang.slice(0, 2)));
+  /* 읽기: 한국어 문장은 읽기 사전을 거쳐 의료진 발음으로 */
   function speak(text, lang = "ko-KR", rate = 1) {
+    const my = ++token;
     return new Promise(res => {
-      if (!canSpeak || !text) return res();
+      if (!canSpeak || !text) return res(false);
       try {
         speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(text);
+        const u = new SpeechSynthesisUtterance(lang === "ko-KR" ? toKo(text) : text);
         u.lang = lang; u.rate = rate; const v = pick(lang); if (v) u.voice = v;
-        u.onend = () => res(); u.onerror = () => res();
+        u.onend = () => res(my === token); u.onerror = () => res(false);
         speechSynthesis.speak(u);
-      } catch (_) { res(); }
+      } catch (_) { res(false); }
     });
   }
-  function stopSpeaking() { try { canSpeak && speechSynthesis.cancel(); } catch (_) {} }
-  function start(update, stop) {
+  function hush() { token++; try { canSpeak && speechSynthesis.cancel(); } catch (_) {} }
+  function start(upd, stop) {
     if (!canListen || listening) return false;
-    stopSpeaking();
-    onUpdate = update; onStop = stop; finalText = ""; stoppedByUser = false;
-    rec = new SR(); rec.lang = "ko-KR"; rec.interimResults = true; rec.continuous = true; rec.maxAlternatives = 1;
-    rec.onresult = e => {
-      let interim = "";
-      for (let i = e.resultIndex; i < e.results.length; i++) {
-        const r = e.results[i];
-        if (r.isFinal) finalText += r[0].transcript + " "; else interim += r[0].transcript;
-      }
-      onUpdate && onUpdate((finalText + interim).trim());
-    };
+    hush(); onUpd = upd; onStop = stop; finalText = ""; byUser = false;
+    rec = new SR(); rec.lang = "ko-KR"; rec.interimResults = true; rec.continuous = true;
+    rec.onresult = e => { let inter = ""; for (let i = e.resultIndex; i < e.results.length; i++) { const r = e.results[i]; if (r.isFinal) finalText += r[0].transcript + " "; else inter += r[0].transcript; } onUpd && onUpd((finalText + inter).trim()); };
     rec.onerror = e => { listening = false; onStop && onStop(finalText.trim(), e.error || "error"); onStop = null; };
-    rec.onend = () => { if (!listening) return; listening = false; onStop && onStop(finalText.trim(), stoppedByUser ? "user" : "ended"); onStop = null; };
-    try { rec.start(); listening = true; return true; } catch (_) { listening = false; return false; }
+    rec.onend = () => { if (!listening) return; listening = false; onStop && onStop(finalText.trim(), byUser ? "user" : "ended"); onStop = null; };
+    try { rec.start(); listening = true; return true; } catch (_) { return false; }
   }
-  function stop() { if (rec && listening) { stoppedByUser = true; try { rec.stop(); } catch (_) {} } }
-  return { canListen, canSpeak, speak, stopSpeaking, start, stop, get listening() { return listening; } };
+  function stop() { if (rec && listening) { byUser = true; try { rec.stop(); } catch (_) {} } }
+  return { canListen, canSpeak, speak, hush, start, stop, get listening() { return listening; } };
+})();
+
+/* ---------- 재생기: 문장 단위로 일시 정지 · 다시 재생 ---------- */
+const Player = (() => {
+  let segs = [], i = 0, state = "idle", onSeg = null;
+  const ui = { box: () => document.getElementById("player") };
+  function split(stages) {
+    const out = [];
+    stages.forEach(s => s.model.replace(/([.?!])\s+/g, "$1\n").split("\n").filter(x => x.trim()).forEach(x => out.push({ k: s.k, label: s.l + " · " + s.ko, text: x.trim() })));
+    return out;
+  }
+  function paint() {
+    const p = ui.box(); p.hidden = state === "idle"; document.body.classList.toggle("playing", state !== "idle");
+    if (state === "idle") { onSeg && onSeg(null); return; }
+    const s = segs[i] || segs[segs.length - 1];
+    document.getElementById("plTitle").textContent = s.label;
+    document.getElementById("plSub").textContent = s.text;
+    document.getElementById("plProg").style.width = Math.round(((i + (state === "playing" ? .5 : 0)) / segs.length) * 100) + "%";
+    const t = document.getElementById("plToggle");
+    t.setAttribute("aria-label", state === "playing" ? "일시 정지" : "다시 재생");
+    document.getElementById("plIcon").innerHTML = state === "playing" ? '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>' : '<path d="M8 5v14l11-7z"/>';
+    onSeg && onSeg(s);
+  }
+  async function run() {
+    while (state === "playing" && i < segs.length) {
+      paint();
+      const finished = await Voice.speak(segs[i].text, "ko-KR", rate());
+      if (state !== "playing" || !finished) return;
+      i++;
+    }
+    if (state === "playing") { state = "idle"; i = 0; paint(); }
+  }
+  return {
+    load(stages, startKey, cb) { segs = split(stages); onSeg = cb; i = Math.max(0, startKey ? segs.findIndex(s => s.k === startKey) : 0); state = "playing"; run(); },
+    toggle() { if (state === "playing") { state = "paused"; Voice.hush(); paint(); } else if (state === "paused") { state = "playing"; run(); } },
+    next() { if (state === "idle") return; Voice.hush(); i = Math.min(segs.length - 1, i + 1); if (state === "playing") run(); else paint(); },
+    prev() { if (state === "idle") return; Voice.hush(); i = Math.max(0, i - 1); if (state === "playing") run(); else paint(); },
+    stop() { state = "idle"; i = 0; Voice.hush(); paint(); },
+    get state() { return state; }
+  };
 })();
 
 /* ---------- 3. 대화 엔진 (규칙 기반) ----------
-   교체 방법: 같은 모양의 객체(start, respond, feedback)를 만들어 Engine에 넣으면 됩니다.
-   - start(level) -> 첫 인사 문장
-   - respond(text) -> {reply, covered:[단계키], current:단계키, done:boolean}
-   - feedback() -> {checklist:{id:true/false}, terms:[], fit:[], pro:[], good:[], overall:""}
+   API 연결 시 같은 모양(start, respond, feedback)의 엔진으로 교체: const Engine = ...
+   respond(text) -> {reply, covered:[단계키], current:단계키, done:boolean}
 */
-const CHECK = STAGES.flatMap(s => s.items.map((it, i) => ({ id: s.k + "-" + (i + 1), stage: s.k, label: it })));
-
-/* 점검 항목별 판정 규칙: 정규식은 공백을 지운 소문자 문장에 적용 */
+const norm = s => (s || "").toLowerCase().replace(/[\s.,·…!?~"'“”‘’()\[\]-]/g, "");
+const CHECK = ALLSTAGES.flatMap(s => s.items.map((it, n) => ({ id: s.k + "-" + (n + 1), stage: s.k, label: it })));
 const RULES = {
+  "G-1": t => /안녕하|수고하셨|수고많|좋은아침|좋은저녁/.test(t),
+  "G-2": t => /인계드리|인계하겠|인계시작|번인계|이브닝번|이브닝근무|evening|데이번|day번/.test(t),
   "P-1": t => /심근식|58세|오십팔세|58|남자|남성|male/.test(t),
   "P-2": t => /stemi|스테미|심근경색|인피리어|inferior|하벽/.test(t),
   "P-3": t => /ccu|씨씨유|병상대기|입실대기|대기중|응급실에/.test(t),
   "A1-1": t => /alert|얼러트|알러트|얼럿|의식명료|명료|멘탈|mental/.test(t),
-  "A1-2": t => /118|백십팔|72|78/.test(t) || (/혈압|bp|바이탈|v\/s|vs|활력징후|맥박|호흡/.test(t) && /\d/.test(t)),
+  "A1-2": t => /118|백십팔|78/.test(t) || (/혈압|bp|바이탈|v\/s|vs|활력징후|맥박|호흡/.test(t) && /\d/.test(t)),
   "A1-3": t => /nrs|엔알에스|통증점수|[0-9일]점/.test(t) && /통증|nrs|엔알에스|pain|페인/.test(t),
   "A1-4": t => /ecg|ekg|이씨지|이시지|이케이지|심전도|리듬|arrhythmia|부정맥|sinus|사이너스|동리듬|굴리듬|stelevation|st상승|에스티/.test(t),
   "A1-5": t => /radial|레디얼|레이디얼|요골|노동맥|puncture|펑처|천자|지혈대|trband|tr밴드|hematoma|헤마토마|혈종/.test(t),
@@ -470,7 +676,7 @@ const RULES = {
   "S1-2": t => /stelevation|st상승|에스티엘리베이션|에스티엘레베이션|에스티상승|troponin|트로포닌|tni/.test(t),
   "S1-3": t => /pci|피씨아이|피시아이|cag|씨에이지|캐그|stent|스텐트|rca|알씨에이|관상동맥조영|시술/.test(t),
   "S2-1": t => /bleeding|블리딩|출혈|피날|지혈/.test(t),
-  "S2-2": t => /brady|브라디|서맥|느린맥|맥박이느려|hypotension|하이포텐션|저혈압|혈압이떨어|avblock|방실차단/.test(t),
+  "S2-2": t => /brady|브라디|브래디|서맥|느린맥|맥박이느려|hypotension|하이포텐션|저혈압|혈압이떨어|avblock|방실차단/.test(t),
   "S2-3": t => /낙상|fall/.test(t),
   "S2-4": t => /알레르기|알러지|allergy|앨러지/.test(t),
   "B-1": t => /htn|고혈압|hypertension|하이퍼텐션|고지혈|고지질|hyperlipidemia|하이퍼리피|이상지질/.test(t),
@@ -485,168 +691,157 @@ const RULES = {
   "R-2": t => /carvedilol|카베딜롤|카르베딜롤|베타차단|betablocker|베타블로커|딜라트렌/.test(t),
   "R-3": t => /i&o|i\/o|아이앤오|아이엔오|아이오체크|섭취량|배설량|소변량|intake|인테이크/.test(t),
   "R-4": t => /noti|노티|notify|보고해|연락해|연락주|알려/.test(t),
-  "R-5": t => /전동|트랜스퍼|transfer|병상나면|자리나면|올라가|입실예정/.test(t)
+  "R-5": t => /전동|트랜스퍼|transfer|병상나면|자리나면|올라가|입실예정/.test(t),
+  "Q-1": t => /궁금|질문있|질문하실|물어보실|여쭤보실|모르시는|확인하실것|더필요하신/.test(t)
 };
-
-/* 단계별 빠진 항목 단서 질문 */
-const CUES = {
+/* 인계하지 않은 모범 발화 내용에 대한 나이트 간호사의 질문 */
+const ASKS = {
+  "G-2":"오늘 이브닝 담당이셨죠?",
   "P-1":"환자분 성함이랑 나이 다시 말씀해 주실래요?", "P-2":"진단명이 정확히 뭐였죠?", "P-3":"지금 어디로 가실 예정이에요?",
-  "A1-1":"의식은 어때요?", "A1-2":"마지막 V/S 수치 알려 주실래요?", "A1-3":"chest pain은 지금 몇 점이에요?", "A1-4":"시술 후 ECG는 어땠어요?",
-  "A1-5":"puncture site는 어디예요? 지금 괜찮아요?", "A1-6":"수액이랑 산소는 뭐 들어가고 있어요?", "A1-7":"식이랑 활동은 어떻게 하고 계세요?",
+  "A1-1":"의식은 어때요?", "A1-2":"마지막 V/S 수치 알려 주실래요?", "A1-3":"chest pain은 지금 몇 점이에요?", "A1-4":"시술 후 ECG랑 monitor 리듬은 어땠어요?",
+  "A1-5":"puncture site는 어디예요? 지금 괜찮아요?", "A1-6":"수액이랑 O2는 뭐 들어가고 있어요?", "A1-7":"식이랑 활동은 어떻게 하고 계세요?",
   "S1-1":"오늘 어떻게 오신 분이에요?", "S1-2":"STEMI는 뭘로 확인된 거예요?", "S1-3":"시술은 어떻게 됐어요?",
   "S2-1":"항혈소판제랑 heparin 들어갔으면 뭘 조심해야 하죠?", "S2-2":"inferior MI면 맥박이나 혈압은 뭘 봐야 해요?", "S2-3":"morphine 들어가고 bed rest 중이면 낙상은요?", "S2-4":"allergy는 있어요?",
   "B-1":"원래 갖고 계신 병은요? 약은 드셨어요?", "B-2":"흡연력은요?", "B-3":"전에도 비슷한 증상이 있었대요?",
   "A2-1":"NTG는 몇 번 들어갔고 효과는 어땠어요?", "A2-2":"진통제는 뭐 들어갔어요?", "A2-3":"항혈소판제는 뭐 들어갔어요?", "A2-4":"heparin은 들어갔어요?", "A2-5":"검사 결과는 어땠어요?",
   "R-1":"제가 계속 관찰해야 할 건 뭐예요?", "R-2":"carvedilol은 들어갔어요?", "R-3":"I&O는 어떻게 할까요?", "R-4":"어떤 경우에 바로 noti 하면 될까요?", "R-5":"CCU는 언제 올라가요?"
 };
-const LEAD = { P:"선생님, 수고하셨어요. 심근식 님 인계 주실래요?", A1:"지금 상태는 어때요?", S1:"오늘 어떻게 오신 분이에요?", S2:"주의해서 봐야 할 게 있을까요?", B:"원래 갖고 계신 병은요?", A2:"응급실에서는 뭐 했어요?", R:"제가 뭘 챙기면 될까요?" };
+const ASK_ORDER = ["S2-1","S2-2","R-2","A1-5","A1-2","A1-4","A2-1","A2-2","A2-3","A2-4","R-4","R-1","A1-3","A1-6","A1-7","S2-3","S2-4","P-2","S1-2","S1-3","A2-5","B-1","B-2","B-3","R-3","R-5","A1-1","P-1","P-3","S1-1"];
+const LEAD = { P:"네, 환자분부터 말씀해 주세요.", A1:"지금 상태는 어때요?", S1:"오늘 어떻게 오신 분이에요?", S2:"주의해서 봐야 할 게 있을까요?", B:"원래 갖고 계신 병은요?", A2:"응급실에서는 뭐 했어요?", R:"제가 뭘 챙기면 될까요?" };
 const DEEP = [
-  { q:"inferior MI면 리듬은 뭘 특히 봐야 해요?", ok: t => /brady|브라디|서맥|느린맥|avblock|방실차단|에이브이블록/.test(t), ans:"bradycardia와 AV block을 특히 봅니다." },
-  { q:"carvedilol은 왜 바로 안 주고 조건을 확인해요?", ok: t => /brady|브라디|서맥|느린맥|hypotension|저혈압|하이포텐션|혈압/.test(t), ans:"bradycardia와 hypotension을 일으킬 수 있어서입니다." },
-  { q:"BUN/Cr은 왜 확인했어요?", ok: t => /조영제|contrast|신기능|신장|콩팥|kidney/.test(t), ans:"contrast medium에 의한 신기능 저하를 확인하기 위해서입니다." },
-  { q:"heparin 들어갔는데 puncture site에서는 뭘 봐야 하죠?", ok: t => /bleeding|블리딩|출혈|hematoma|헤마토마|혈종|맥박|순환|색/.test(t), ans:"bleeding, hematoma와 말초 순환(손가락 색, 감각)을 봅니다." }
+  { q:"inferior MI면 리듬은 뭘 특히 봐야 해요?", ok: t => /brady|브라디|브래디|서맥|느린맥|avblock|방실차단|에이브이블록/.test(t), ans:"bradycardia와 AV block을 특히 봐요." },
+  { q:"carvedilol은 왜 바로 안 주고 조건을 확인해요?", ok: t => /brady|브라디|브래디|서맥|느린맥|hypotension|저혈압|하이포텐션|혈압/.test(t), ans:"bradycardia와 hypotension을 일으킬 수 있어서예요." },
+  { q:"BUN/Cr은 왜 확인했어요?", ok: t => /조영제|contrast|신기능|신장|콩팥|kidney/.test(t), ans:"contrast medium에 의한 신기능 저하를 확인하려고요." },
+  { q:"heparin 들어갔는데 puncture site에서는 뭘 봐야 하죠?", ok: t => /bleeding|블리딩|출혈|hematoma|헤마토마|혈종|맥박|순환|색/.test(t), ans:"bleeding, hematoma와 말초 순환을 봐요." }
 ];
-
-/* 정해 둔 오류 패턴: 학생 발화 한 번에 하나만 되묻기 */
 const ERRORS = [
-  { id:"st", test:(t, raw) => /stdepression|에스티디프레션|st하강|에스티하강/.test(t) && !/내원시|내원당시|처음에|초기|내원했을때|처음엔|처음/.test(t),
+  { id:"st", test:t => /stdepression|에스티디프레션|st하강|에스티하강/.test(t) && !/내원시|내원당시|처음에|초기|내원했을때|처음엔|처음/.test(t),
     ask:"ST가 내려갔다는 거예요? 시술 결정은 뭘 보고 한 거였죠?",
-    fb:{ axis:"terms", issue:"시술 결정의 근거로 ST depression(ST분절 하강)을 말했습니다.", better:"내원 시 소견은 ST depression(허혈), 재실 중 변화는 II, III, aVF의 ST elevation(경색)입니다." } },
-  { id:"bp", test:(t, raw) => { const m = [...raw.matchAll(/(\d{2,3})\s*[\/에]\s*(\d{2,3})/g)].map(x => x[1] + "/" + x[2]); return m.some(p => !["118/72","135/90","140/90","120/70","130/90","16/1"].includes(p)); },
+    fb:{ axis:"terms", issue:"시술 결정의 근거로 ST depression(ST분절 하강)을 말했어요.", better:"내원 시 소견은 ST depression(허혈), 재실 중 변화는 II, III, aVF의 ST elevation(경색)이에요." } },
+  { id:"bp", test:(t, raw) => [...raw.matchAll(/(\d{2,3})\s*[\/에]\s*(\d{2,3})/g)].map(x => x[1] + "/" + x[2]).some(p => !["118/72","135/90","140/90","120/70","130/90"].includes(p)),
     ask:"혈압 수치 다시 한번 말씀해 주실래요? 차트랑 달라서요.",
-    fb:{ axis:"pro", issue:"혈압 수치가 환자 정보와 다릅니다.", better:"22시 30분 V/S 118/72, 78회, 18회, 36.7도, SpO2 98%입니다." } },
-  { id:"spo2", test:(t, raw) => { const m = raw.match(/(spo2|SpO2|산소포화도|에스피오투|새츄레이션)[^0-9]{0,6}(\d{2,3})/i); return !!m && !["98","95","94","97"].includes(m[2]); },
+    fb:{ axis:"pro", issue:"혈압 수치가 차트와 달라요.", better:"22시 30분 V/S 118/72, 78회, 18회, 36.7도, SpO2 98%입니다." } },
+  { id:"spo2", test:(t, raw) => { const m = raw.match(/(spo2|산소포화도|에스피오투|새츄레이션)[^0-9]{0,6}(\d{2,3})/i); return !!m && !["98","95","94","97"].includes(m[2]); },
     ask:"SpO2 몇 퍼센트라고 하셨죠? 다시 확인해 주세요.",
-    fb:{ axis:"pro", issue:"SpO2 수치가 환자 정보와 다릅니다.", better:"현재 SpO2는 98%(O2 4 L/min nasal prong)입니다." } },
+    fb:{ axis:"pro", issue:"SpO2 수치가 차트와 달라요.", better:"현재 SpO2 98%, O2 4 L/min nasal prong입니다." } },
   { id:"asp", test:t => /aspiration|어스피레이션|에스피레이션/.test(t) && /준비|기구|장비|해주세요/.test(t),
     ask:"aspiration은 흡인 위험을 말씀하신 거죠? 장비라면 suction인가요?",
-    fb:{ axis:"terms", issue:"aspiration과 suction을 혼동했습니다. 한글로는 둘 다 '흡인'입니다.", better:"aspiration은 기도로 넘어가는 것(위험), suction은 빨아내는 처치(장비)입니다." } },
+    fb:{ axis:"terms", issue:"aspiration과 suction을 혼동했어요. 한글로는 둘 다 '흡인'이에요.", better:"aspiration은 기도로 넘어가는 것(위험), suction은 빨아내는 처치(장비)예요." } },
   { id:"ntgpo", test:t => /(ntg|니트로|엔티지).{0,12}(po|피오|경구|삼켜|드셨)/.test(t),
     ask:"NTG는 어떤 경로로 들어갔어요?",
-    fb:{ axis:"terms", issue:"NTG 투여 경로를 PO(경구)로 말했습니다.", better:"NTG는 SL(sublingual, 혀밑) 투여입니다. sub-(아래) + lingu/o(혀) + -al(~의)." } },
+    fb:{ axis:"terms", issue:"NTG 투여 경로를 PO(경구)로 말했어요.", better:"NTG는 SL(sublingual, 혀밑) 투여예요. sub-(아래) + lingu/o(혀) + -al(~의)." } },
   { id:"fem", test:t => /femoral|페모럴|대퇴|넙다리/.test(t),
     ask:"puncture site가 femoral이었어요? 차트에는 radial로 되어 있는데요.",
-    fb:{ axis:"terms", issue:"천자 부위를 femoral(넙다리)로 말했습니다.", better:"천자 부위는 Rt radial artery(노동맥)입니다. radi/o(노뼈) + -al(~의)." } },
+    fb:{ axis:"terms", issue:"천자 부위를 femoral(넙다리)로 말했어요.", better:"천자 부위는 Rt radial artery(노동맥)예요. radi/o(노뼈) + -al(~의)." } },
   { id:"tachy", test:t => /tachy|타키|빈맥|빠른맥/.test(t) && /주의|조심|봐야/.test(t),
     ask:"inferior MI라 주의할 건 맥이 빨라지는 거예요, 느려지는 거예요?",
-    fb:{ axis:"terms", issue:"inferior MI의 주의 리듬을 tachycardia로 말했습니다.", better:"inferior MI에서는 bradycardia와 AV block을 주의합니다. brady-(느린) + cardi/o(심장) + -ia(상태)." } },
-  { id:"carv", test:t => /(carvedilol|카베딜롤|카르베딜롤|베타차단|베타블로커).{0,15}(투여했|줬|드렸|복용시켰|들어갔)/.test(t) && !/안|전|아직/.test(t.replace(/(carvedilol|카베딜롤|카르베딜롤)/, "")),
+    fb:{ axis:"terms", issue:"inferior MI의 주의 리듬을 tachycardia로 말했어요.", better:"inferior MI에서는 bradycardia와 AV block을 주의해요. brady-(느린) + cardi/o(심장) + -ia(상태)." } },
+  { id:"carv", test:t => /(carvedilol|카베딜롤|카르베딜롤|베타차단|베타블로커)(투여했|줬|드렸|복용시켰|들어갔)/.test(t),
     ask:"carvedilol은 이미 들어간 거예요? 차트에는 투여 전으로 되어 있어서요.",
-    fb:{ axis:"fit", issue:"carvedilol을 투여한 것으로 말했습니다. 차트에는 미투여입니다.", better:"carvedilol 3.125 mg은 투여 전이며, SBP 100 이상, HR 60회 이상, post-PCI ECG 확인 후 투여하도록 인계합니다." } },
+    fb:{ axis:"fit", issue:"carvedilol을 투여한 것으로 말했어요. 차트에는 미투여예요.", better:"carvedilol 3.125 mg은 투여 전이고, SBP 100 이상, HR 60회 이상, post-PCI ECG 확인 후 투여하도록 인계해요." } },
   { id:"mor", test:(t, raw) => { const m = raw.match(/(morphine|모르핀|몰핀)[^0-9]{0,8}(\d+(?:\.\d+)?)/i); return !!m && m[2] !== "2.5"; },
     ask:"morphine 용량이 얼마였죠?",
-    fb:{ axis:"pro", issue:"morphine 용량이 환자 정보와 다릅니다.", better:"morphine 2.5 mg IV 투여 후 NRS 3점으로 감소했습니다." } }
+    fb:{ axis:"pro", issue:"morphine 용량이 차트와 달라요.", better:"morphine 2.5 mg IV 투여 후 NRS 3점으로 감소했어요." } }
 ];
 
 const RuleEngine = (() => {
-  let level = "basic", met = {}, metAt = {}, asked = new Set(), errAsked = new Set(), errHit = [], current = "P", visited = new Set(["P"]),
-      phase = "talk", missQueue = [], deep = null, deepOk = null, turnsIn = 0, utter = [], cueCount = {};
-  const keys = STAGES.map(s => s.k);
-  const stageItems = k => CHECK.filter(c => c.stage === k);
-  const stageCovered = k => { const it = stageItems(k); return it.filter(c => met[c.id]).length * 2 >= it.length; };
-  const coveredList = () => keys.filter(stageCovered);
-  function scan(raw) {
-    const t = norm(raw); const newly = [];
-    CHECK.forEach(c => { if (!met[c.id] && RULES[c.id](t)) { met[c.id] = true; metAt[c.id] = current; newly.push(c.id); } });
-    return { t, newly };
-  }
-  function findError(t, raw) {
-    for (const e of ERRORS) if (!errAsked.has(e.id) && e.test(t, raw)) { errAsked.add(e.id); errHit.push({ e, raw }); return e; }
-    return null;
-  }
+  let level, met, metAt, errAsked, errHit, current, led, phase, queue, deep, deepOk, turns, utter, greeted, askedQ, finishedSaying;
+  const MAIN = STAGES.map(s => s.k);
+  const items = k => CHECK.filter(c => c.stage === k);
+  const covered = () => ALLSTAGES.map(s => s.k).filter(k => { const it = items(k); return it.filter(c => met[c.id]).length * 2 >= it.length; });
+  const out = (reply, done = false) => ({ reply, covered: covered(), current, done });
+  function scan(raw) { const t = norm(raw); CHECK.forEach(c => { if (!met[c.id] && RULES[c.id](t)) { met[c.id] = true; metAt[c.id] = current; } }); return t; }
+  function findError(t, raw) { for (const e of ERRORS) if (!errAsked.has(e.id) && e.test(t, raw)) { errAsked.add(e.id); errHit.push({ e, raw }); return e; } return null; }
   function readBack() {
-    const said = id => met[id];
-    const parts = [];
-    parts.push("정리할게요. 심근식 님, inferior STEMI로 primary PCI 받고 CCU 대기 중이시고");
-    if (said("A1-2") || said("A1-3")) parts.push("V/S 안정적이고 chest pain은 많이 줄었고");
-    if (said("A1-5")) parts.push("Rt radial puncture site 이상 없고");
-    if (said("S2-1") || said("S2-2")) parts.push("bleeding이랑 bradycardia, hypotension 주의하고");
-    if (said("R-2")) parts.push("carvedilol은 조건 확인 후 투여하고");
-    if (said("R-4")) parts.push("chest pain 재발하거나 리듬 변화 있으면 바로 noti 하면 되는 거죠?");
-    else parts.push("나머지는 제가 차트 보면서 확인할게요. 맞죠?");
-    return parts.join(", ").replace(", 나머지", ". 나머지");
+    const s = id => met[id], p = ["네, 정리할게요. 심근식 님, inferior STEMI로 primary PCI 받고 CCU 대기 중이시고"];
+    if (s("A1-2") || s("A1-3")) p.push("V/S 안정적이고 chest pain은 많이 줄었고");
+    if (s("A1-5")) p.push("Rt radial puncture site 이상 없고");
+    if (s("S2-1") || s("S2-2")) p.push("bleeding이랑 bradycardia, hypotension 주의하고");
+    if (s("R-2")) p.push("carvedilol은 조건 확인하고 투여하고");
+    p.push(s("R-4") ? "chest pain 재발하거나 리듬 변화 있으면 바로 noti 하면 되는 거죠?" : "나머지는 제가 차트 보면서 확인할게요. 맞죠?");
+    return p.join(", ").replace(", 나머지", ". 나머지");
   }
-  function nextStage() { return keys.find(k => !visited.has(k)); }
-  function out(reply, done = false) { return { reply, covered: coveredList(), current, done }; }
+  function buildQueue() { return ASK_ORDER.filter(id => !met[id]).slice(0, level === "basic" ? 4 : 5); }
+  function nextQuestion(prefix) {
+    queue = queue.filter(id => !met[id]);
+    const id = queue.shift();
+    if (id) { current = id.split("-")[0]; return out((prefix || "") + ASKS[id]); }
+    if (level === "adv" && !deep) { phase = "deep"; current = "Q"; deep = DEEP[Math.floor(Math.random() * DEEP.length)]; return out("하나만 더 여쭤볼게요. " + deep.q); }
+    phase = "readback"; current = "Q"; return out(readBack());
+  }
   return {
     start(lv) {
-      level = lv; met = {}; metAt = {}; asked = new Set(); errAsked = new Set(); errHit = []; current = "P"; visited = new Set(["P"]);
-      phase = "talk"; missQueue = []; deep = null; deepOk = null; turnsIn = 0; utter = []; cueCount = {};
-      return LEAD.P;
+      level = lv; met = {}; metAt = {}; errAsked = new Set(); errHit = []; current = "G"; led = new Set(); phase = "greet";
+      queue = []; deep = null; deepOk = null; turns = 0; utter = []; greeted = false; askedQ = false; finishedSaying = false;
+      return null;  /* 학생이 먼저 인사 */
     },
     respond(raw) {
-      turnsIn++; utter.push({ stage: current, text: raw });
-      const { t } = scan(raw);
-      if (phase === "readback") { phase = "done"; return out(/아니|틀|아뇨|정정|수정/.test(t) ? "네, 그 부분은 차트 다시 확인할게요. 수고하셨어요. 들어가세요." : "네, 확인했습니다. 수고하셨어요. 들어가세요.", true); }
-      if (phase === "done") return out("인계 마쳤어요. 아래 '마치기'를 눌러 피드백을 확인하세요.", true);
-      if (phase === "deep") { deepOk = deep.ok(t); phase = "readback"; return out((deepOk ? "네, 맞아요. " : "네, 그 부분은 같이 다시 확인해요. " + deep.ans + " ") + readBack()); }
+      turns++; utter.push({ stage: current, text: raw });
+      const t = scan(raw);
+      if (phase === "done") return out("인계 마쳤어요. ‘마치기’를 눌러 결과를 확인하세요.", true);
+      if (phase === "readback") { phase = "done"; return out(/아니|틀|아뇨|정정|수정/.test(t) ? "네, 그 부분은 차트 다시 확인할게요. 이브닝 근무 수고 많으셨어요. 조심히 들어가세요." : "네, 확인했습니다. 이브닝 근무 수고 많으셨어요. 조심히 들어가세요.", true); }
+      if (phase === "deep") { deepOk = deep.ok(t); phase = "readback"; current = "Q"; return out((deepOk ? "네, 맞아요. " : "네, 그 부분은 같이 기억해 둘게요. " + deep.ans + " ") + readBack()); }
+      if (phase === "qa") { const e = findError(t, raw); if (e) return out(e.ask); return nextQuestion("네. "); }
+
+      /* 인사 */
+      if (phase === "greet") {
+        phase = "talk"; greeted = !!(met["G-1"]);
+        const hasContent = CHECK.some(c => c.stage !== "G" && met[c.id]);
+        current = "P"; led.add("P");
+        if (!hasContent) return out(NIGHT_GREET + (level === "basic" ? " " + LEAD.P : ""));
+        return out(greeted ? NIGHT_GREET.replace(" 인계 부탁드립니다.", "") + " 네, 계속 말씀해 주세요." : "안녕하세요, 선생님. 네, 계속 말씀해 주세요.");
+      }
+      /* 오류 되묻기 */
       const err = findError(t, raw);
       if (err) return out(err.ask);
-      if (/^(네|예|맞아요|맞습니다)$/.test(t) && phase === "talk" && level === "basic") return out(LEAD[current]);
+      /* 학생이 궁금한 점을 물으면: 인계하지 않은 모범 발화 내용을 질문 */
+      if (met["Q-1"] && !askedQ) {
+        askedQ = true; phase = "qa"; queue = buildQueue();
+        if (!queue.length && level === "basic") { phase = "readback"; current = "Q"; return out("아니요, 잘 들었어요. " + readBack()); }
+        return nextQuestion("네, 몇 가지만 여쭤볼게요. ");
+      }
+      if (/이상입니다|이상이에요|이상입니|여기까지|끝입니다|마치겠|인계끝/.test(t)) finishedSaying = true;
 
       if (level === "basic") {
-        const stageDone = k => stageItems(k).every(c => met[c.id]);
-        if (!stageDone(current)) {
-          const missing = stageItems(current).filter(c => !met[c.id] && !asked.has(c.id));
-          const cap = current === "A1" ? 3 : 2, n = cueCount[current] || 0;
-          if (missing.length && n < cap) { cueCount[current] = n + 1; asked.add(missing[0].id); return out(CUES[missing[0].id]); }
-        }
-        const nx = keys.find(k => !visited.has(k) && !stageDone(k));
-        keys.forEach(k => { if (stageDone(k)) visited.add(k); });
-        if (nx) { current = nx; visited.add(nx); return out("네. " + LEAD[nx]); }
-        phase = "readback"; return out(readBack());
+        const stageDone = k => items(k).every(c => met[c.id]);
+        const nx = MAIN.find(k => !led.has(k) && !stageDone(k));
+        MAIN.forEach(k => { if (stageDone(k)) led.add(k); });
+        if (nx) { current = nx; led.add(nx); return out("네. " + LEAD[nx]); }
+        current = "Q";
+        return out(finishedSaying ? "네, 감사합니다." : "네.");
       }
-      /* 심화: 끝까지 듣고 마지막에 묻기 */
-      const said = CHECK.filter(c => met[c.id]).length;
-      const finished = /이상입니다|이상이에요|이상입니|여기까지|끝입니다|마치겠|이상인계|인계끝/.test(t) || said >= CHECK.length - 2;
-      if (phase === "talk" && !finished) {
-        const last = keys.filter(k => stageItems(k).some(c => met[c.id])).pop(); if (last) current = last;
-        return out(["네.", "네, 계속해 주세요.", "네, 듣고 있어요."][turnsIn % 3]);
-      }
-      if (phase === "talk") { phase = "ask"; missQueue = CHECK.filter(c => !met[c.id]).slice(0, 3).map(c => c.id); }
-      if (phase === "ask") {
-        missQueue = missQueue.filter(id => !met[id]);
-        const id = missQueue.shift();
-        if (id) { current = id.split("-")[0]; return out(CUES[id]); }
-        phase = "deep"; deep = DEEP[Math.floor(Math.random() * DEEP.length)];
-        return out("하나만 더 여쭤볼게요. " + deep.q);
-      }
-      return out(readBack());
+      /* 심화: 맞장구만 */
+      const last = MAIN.filter(k => items(k).some(c => met[c.id])).pop(); if (last) current = last;
+      if (finishedSaying) current = "Q";
+      return out(finishedSaying ? "네, 감사합니다." : ["네.", "네, 계속해 주세요.", "네, 듣고 있어요."][turns % 3]);
     },
     feedback() {
       const checklist = {}; CHECK.forEach(c => checklist[c.id] = !!met[c.id]);
-      const all = utter.map(u => u.text).join(" "); const T = norm(all); const RAW = all.toLowerCase();
+      const all = utter.map(u => u.text).join(" "), T = norm(all), RAW = all.toLowerCase();
       const terms = [], fit = [], pro = [], good = [];
-      errHit.forEach(({ e, raw }) => { const item = Object.assign({ said: raw.length > 60 ? raw.slice(0, 60) + "…" : raw }, e.fb); (e.fb.axis === "terms" ? terms : e.fb.axis === "pro" ? pro : fit).push(item); });
-      /* 일상어만 쓴 경우 */
-      const plainPairs = [
-        [/맥박이?느려|맥이느려/, /brady|브라디|서맥/, "맥박이 느려지는 것", "bradycardia(느린맥). brady-(느린) + cardi/o(심장) + -ia(상태)"],
-        [/혈압이?떨어|혈압이?낮아/, /hypotension|하이포텐션|저혈압/, "혈압이 떨어지는 것", "hypotension(저혈압). hypo-(낮은) + tens/o(압력) + -ion(상태)"],
-        [/숨이?차|숨쉬기/, /dyspnea|디스니아|디스프니아|호흡곤란/, "숨이 차는 것", "dyspnea(호흡곤란). dys-(어려운) + -pnea(호흡)"],
-        [/심장혈관.{0,4}(찍|검사)|혈관.{0,3}찍/, /cag|씨에이지|캐그|조영술/, "심장 혈관 찍는 검사", "CAG(coronary angiography). angi/o(혈관) + -graphy(촬영법)"],
-        [/식은땀/, /diaphoresis|다이아포레시스|발한/, "식은땀", "diaphoresis(발한). 인계에서는 '식은땀'도 통용되지만 용어로 익혀 두세요"]
-      ];
-      plainPairs.forEach(([p, term, said, better]) => { if (p.test(T) && !term.test(T) && terms.length < 5) terms.push({ said, issue:"일상어로만 표현했습니다.", better }); });
-      /* 상황 적절성 */
-      if (!met["R-2"]) fit.push({ issue:"미수행 처방(carvedilol)을 인계하지 않았습니다.", better:"carvedilol 3.125 mg은 투여 전이며, SBP 100 이상, HR 60회 이상, post-PCI ECG 확인 후 투여하도록 R 단계에서 말합니다." });
+      errHit.forEach(({ e, raw }) => { const it = Object.assign({ said: raw.length > 60 ? raw.slice(0, 60) + "…" : raw }, e.fb); (e.fb.axis === "terms" ? terms : e.fb.axis === "pro" ? pro : fit).push(it); });
+      [[/맥박이?느려|맥이느려/, /brady|브라디|브래디|서맥/, "맥박이 느려지는 것", "bradycardia(느린맥). brady-(느린) + cardi/o(심장) + -ia(상태)"],
+       [/혈압이?떨어|혈압이?낮아/, /hypotension|하이포텐션|저혈압/, "혈압이 떨어지는 것", "hypotension(저혈압). hypo-(낮은) + tens/o(압력) + -ion(상태)"],
+       [/숨이?차|숨쉬기/, /dyspnea|디스니아|디스프니아|호흡곤란/, "숨이 차는 것", "dyspnea(호흡곤란). dys-(어려운) + -pnea(호흡)"],
+       [/심장혈관.{0,4}(찍|검사)|혈관.{0,3}찍/, /cag|씨에이지|캐그|조영술/, "심장 혈관 찍는 검사", "CAG(coronary angiography). angi/o(혈관) + -graphy(촬영법)"]
+      ].forEach(([p, term, said, better]) => { if (p.test(T) && !term.test(T)) terms.push({ said, issue:"일상어로만 표현했어요.", better }); });
+      if (!met["G-1"]) fit.push({ issue:"인계 시작 전에 인사를 하지 않았어요.", better:"“안녕하세요, 선생님. 이브닝 번 인계드리겠습니다.”로 서로 인사하고 시작해요." });
+      if (!met["Q-1"]) fit.push({ issue:"인계를 마치며 궁금한 점이 있는지 묻지 않았어요.", better:"“이상입니다. 혹시 궁금한 점 있으세요?”로 마무리하면 빠진 내용을 함께 확인할 수 있어요." });
+      if (!met["R-2"]) fit.push({ issue:"미수행 처방(carvedilol)을 인계하지 않았어요.", better:"carvedilol 3.125 mg은 투여 전이며, SBP 100 이상, HR 60회 이상, post-PCI ECG 확인 후 투여하도록 R 단계에서 말해요." });
       const safety = ["S2-1","S2-2","S2-3"].filter(id => !met[id]);
-      if (safety.length) fit.push({ issue:"안전 문제 중 " + safety.map(id => CHECK.find(c => c.id === id).label).join(", ") + "을(를) 말하지 않았습니다.", better:"S(Safety) 단계에서 출혈, 서맥·저혈압, 낙상 위험을 함께 말합니다." });
-      const order = keys.indexOf.bind(keys);
-      const early = CHECK.filter(c => met[c.id] && metAt[c.id] && order(c.stage) - order(metAt[c.id]) >= 3);
-      if (level === "basic" && early.length >= 2) fit.push({ issue:"뒤 단계 내용(" + [...new Set(early.map(c => c.stage.replace(/\d/, "")))].join(", ") + ")을 앞 단계에서 먼저 말했습니다.", better:"P → A → S → S → B → A → R 순서로 나누어 말하면 듣는 사람이 놓치지 않습니다." });
-      /* 전문적 표현 */
-      if (met["A1-2"] && !/118|백십팔/.test(T) && !errHit.some(h => h.e.id === "bp")) pro.push({ said:"활력징후", issue:"V/S를 수치 없이 말했습니다.", better:"V/S 118/72, 78회, 18회, 36.7도, SpO2 98%입니다." });
-      if (met["A2-2"] && !/2\.5|이점오/.test(RAW) && !errHit.some(h => h.e.id === "mor")) pro.push({ said:"morphine", issue:"용량과 경로를 말하지 않았습니다.", better:"morphine 2.5 mg IV 후 NRS 3점으로 감소했습니다." });
-      if (met["A2-1"] && !/2회|두번|두차례|2번|이회/.test(T)) pro.push({ said:"NTG", issue:"투여 횟수와 반응을 말하지 않았습니다.", better:"NTG SL 2회 투여했으나 NRS 7~8점으로 지속되었습니다." });
-      if (met["A2-4"] && !/5000|5,000|오천/.test(T)) pro.push({ said:"heparin", issue:"용량을 말하지 않았습니다.", better:"이송 직전 heparin 5,000 U IV 했습니다." });
-      /* 잘한 점 */
+      if (safety.length) fit.push({ issue:"안전 문제 중 " + safety.map(id => CHECK.find(c => c.id === id).label).join(", ") + "을(를) 말하지 않았어요.", better:"S(Safety)에서 출혈, 서맥·저혈압, 낙상 위험을 함께 말해요." });
+      if (met["A1-2"] && !/118|백십팔/.test(T) && !errHit.some(h => h.e.id === "bp")) pro.push({ said:"활력징후", issue:"V/S를 수치 없이 말했어요.", better:"V/S 118/72, 78회, 18회, 36.7도, SpO2 98%입니다." });
+      if (met["A2-2"] && !/2\.5|이점오/.test(RAW) && !errHit.some(h => h.e.id === "mor")) pro.push({ said:"morphine", issue:"용량과 경로를 말하지 않았어요.", better:"morphine 2.5 mg IV 후 NRS 3점으로 감소했습니다." });
+      if (met["A2-1"] && !/2회|두번|두차례|2번|이회/.test(T)) pro.push({ said:"NTG", issue:"투여 횟수와 반응을 말하지 않았어요.", better:"NTG SL 2회 투여했으나 NRS 7~8점으로 지속되었습니다." });
+      if (met["A2-4"] && !/5000|5,000|오천/.test(T)) pro.push({ said:"heparin", issue:"용량을 말하지 않았어요.", better:"이송 직전 heparin 5,000 U IV 했습니다." });
+      if (met["G-1"] && met["Q-1"]) good.push("인사로 시작하고 궁금한 점을 확인하며 마무리했어요.");
+      STAGES.forEach(s => { if (items(s.k).every(c => met[c.id])) good.push(s.n + "(" + s.ko + ") 항목을 빠짐없이 말했어요."); });
+      if (met["R-2"]) good.push("미수행 처방인 carvedilol의 투여 조건을 인계했어요.");
+      if (deepOk === true) good.push("심화 질문에 정확히 답했어요.");
       const hit = CHECK.filter(c => met[c.id]).length;
-      keys.forEach(k => { if (stageItems(k).every(c => met[c.id])) good.push(STAGES.find(s => s.k === k).n + "(" + STAGES.find(s => s.k === k).ko + ") 항목을 빠짐없이 말했습니다."); });
-      if (met["R-2"]) good.push("미수행 처방인 carvedilol의 투여 조건을 인계했습니다.");
-      if (deepOk === true) good.push("심화 질문에 정확히 답했습니다.");
-      const overall = hit >= 25 ? "핵심 내용을 대부분 인계했습니다. 아래 지적 사항과 모범 발화를 비교해 표현을 다듬어 보세요."
-        : hit >= 15 ? "주요 내용은 전달했지만 빠진 항목이 있습니다. 빨간 항목을 중심으로 다시 연습해 보세요."
-        : "빠진 항목이 많습니다. 기본 난이도에서 단계별 힌트를 보며 다시 연습해 보세요.";
+      const overall = hit >= CHECK.length - 4 ? "핵심 내용을 거의 다 인계했어요. 아래 지적과 모범 인계를 비교해 표현을 다듬어 보세요."
+        : hit >= CHECK.length / 2 ? "주요 내용은 전달했지만 빠진 항목이 있어요. 빨간 항목을 중심으로 다시 연습해 보세요."
+        : "빠진 항목이 많아요. 기본 난이도에서 단계별 힌트를 보며 다시 연습해 보세요.";
       return { checklist, terms: terms.slice(0, 5), fit: fit.slice(0, 5), pro: pro.slice(0, 5), good: good.slice(0, 4), overall };
     }
   };
@@ -656,240 +851,319 @@ const RuleEngine = (() => {
 const Engine = RuleEngine;
 
 /* ---------- 4. 화면 ---------- */
-let level = "basic", log = [], coveredSet = new Set(), current = "P", ended = false, done = false, lastFb = null;
-const MAX_TURNS = 14;
-const myTurns = () => log.filter(m => m.role === "me").length;
-const opt = { speak: () => $("optSpeak").checked, auto: () => $("optAutoSend").checked, rate: () => parseFloat($("optRate").value) || 1 };
+const $ = id => document.getElementById(id);
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+const ALIAS = {"STEMI":"ST-segment elevation myocardial infarction","PCI":"percutaneous coronary intervention","CAG":"coronary angiography","V/S":"vital signs","SpO2":"oxygen saturation","NRS":"numeric rating scale","ECG":"electrocardiogram","IV":"intravenous","N/S":"normal saline","nasal prong":"nasal cannula","NPO":"nothing by mouth","HTN":"hypertension","NTG":"nitroglycerin","SL":"sublingual","PO":"by mouth","CK-MB":"creatine kinase-MB","BUN/Cr":"blood urea nitrogen / creatinine","Chest PA":"chest posteroanterior view","RCA":"right coronary artery","CCU":"coronary care unit","AV block":"atrioventricular block","I&O":"intake and output","f/u":"follow-up"};
+const findTerm = label => TERMS.find(t => t.en === (ALIAS[label] || label));
+const SAY = { "ST-segment elevation myocardial infarction":["stemi","스테미"],"percutaneous coronary intervention":["pci","피씨아이"],"coronary angiography":["cag","씨에이지","캐그"],"alert":["alert","얼러트","알러트"],"vital signs":["v/s","바이탈"],"oxygen saturation":["spo2","에스피오투","산소포화도"],"numeric rating scale":["nrs","엔알에스"],"chest pain":["chestpain","체스트페인","흉통"],"chest discomfort":["discomfort","디스컴포트"],"acute":["acute","어큐트"],"dyspnea":["dyspnea","디스니아","호흡곤란"],"electrocardiogram":["ecg","ekg","이씨지","심전도"],"ST elevation":["stelevation","에스티엘리베이션","st상승"],"ST depression":["stdepression","에스티디프레션","st하강"],"arrhythmia":["arrhythmia","어리드미아","부정맥"],"bradycardia":["bradycardia","브래디","브라디","서맥"],"hypotension":["hypotension","하이포텐션","저혈압"],"radial artery":["radial","레디얼"],"hematoma":["hematoma","헤마토마","혈종"],"normal saline":["n/s","노말셀라인"],"nasal cannula":["nasal","나잘","프롱"],"nothing by mouth":["npo","엔피오","금식"],"troponin I":["troponin","트로포닌"],"creatine kinase-MB":["ckmb","씨케이엠비"],"blood urea nitrogen / creatinine":["bun","비유엔","크레아티닌"],"antiplatelet agent":["antiplatelet","항혈소판"],"heparin":["heparin","헤파린"],"morphine":["morphine","모르핀"],"nitroglycerin":["ntg","엔티지","니트로"],"sublingual":["설하","sublingual"],"aspirin":["aspirin","아스피린"],"clopidogrel":["clopidogrel","클로피도그렐"],"loading dose":["loading","로딩"],"beta-blocker":["carvedilol","카르베딜롤","카베딜롤","베타블로커"],"hypertension":["htn","고혈압"],"hyperlipidemia":["hyperlipidemia","고지혈"],"notify":["noti","노티"],"right coronary artery":["rca","알씨에이"],"stent":["stent","스텐트"],"puncture site":["puncture","펑처","천자"],"bleeding":["bleeding","블리딩","출혈"],"bed rest":["bedrest","베드레스트","침상안정"],"atrioventricular block":["avblock","방실차단"],"coronary care unit":["ccu","씨씨유"],"intake and output":["i&o","아이앤오"],"sinus rhythm":["sinus","사이너스"],"inferior":["inferior","인피리어","하벽"],"myocardial infarction":["심근경색"],"ischemia":["허혈","ischemia"],"contrast medium":["조영제"] };
 
-function show(v) { ["vStart","vChat","vFeed"].forEach(x => $(x).hidden = x !== v); window.scrollTo(0, 0); }
+let rate = () => 1, curRate = 1;
+document.querySelectorAll(".rates button").forEach(b => b.onclick = () => { document.querySelectorAll(".rates button").forEach(x => x.setAttribute("aria-pressed", x === b)); curRate = parseFloat(b.dataset.rate); });
+rate = () => curRate;
+
+/* 화면 전환 */
+const VIEWS = ["vHome","vChart","vModel","vTerms","vChat","vFeed"];
+function show(v) {
+  VIEWS.forEach(x => $(x).hidden = x !== v);
+  const chatting = v === "vChat";
+  $("nav").hidden = chatting; $("app").classList.toggle("chatting", chatting);
+  $("player").classList.toggle("in-chat", chatting);
+  document.querySelectorAll(".nav button").forEach(b => { if (b.dataset.go === v) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll(".nav button").forEach(b => b.onclick = () => show(b.dataset.go));
+$("btnGoChart").onclick = () => show("vChart");
+$("btnGoModel").onclick = () => show("vModel");
+$("btnModel2").onclick = () => show("vModel");
 
 /* 환경 안내 */
-(function envStatus() {
-  const box = $("envStatus"); box.replaceChildren();
-  const ua = navigator.userAgent; const iosChrome = /CriOS/.test(ua);
+(function () {
+  const box = $("env"); const ios = /iPhone|iPad|iPod/.test(navigator.userAgent), iosChrome = /CriOS/.test(navigator.userAgent);
   const rows = [
-    [Voice.canListen, Voice.canListen ? "음성 인식 사용 가능" : (window.isSecureContext ? "이 브라우저는 음성 인식을 지원하지 않습니다. Android는 Chrome, iPhone은 Safari를 사용하세요. 키보드로도 입력할 수 있습니다." : "https 주소에서만 마이크를 쓸 수 있습니다.")],
-    [Voice.canSpeak, Voice.canSpeak ? "음성 출력 사용 가능" : "이 브라우저는 음성 출력을 지원하지 않습니다. 글로만 표시됩니다."]
+    [Voice.canListen, Voice.canListen ? "마이크로 말하기 사용 가능" : (window.isSecureContext ? "이 브라우저는 음성 인식을 지원하지 않아요. Android는 Chrome, iPhone은 Safari를 쓰세요. 키보드로도 할 수 있어요." : "https 주소에서만 마이크를 쓸 수 있어요.")],
+    [Voice.canSpeak, Voice.canSpeak ? "소리로 듣기 사용 가능" : "이 브라우저는 음성 출력을 지원하지 않아요."]
   ];
-  if (iosChrome) rows.push([false, "iPhone의 Chrome에서는 음성 인식이 되지 않을 수 있습니다. Safari를 권장합니다."]);
-  rows.forEach(([ok, txt]) => { const s = el("div", "s"); s.append(el("span", "dot " + (ok ? "y" : "n")), el("span", null, txt)); box.append(s); });
-  if (!Voice.canListen) { $("btnMic").disabled = true; $("micLabel").firstChild.textContent = "키보드로 입력"; }
+  if (iosChrome) rows.push([false, "iPhone의 Chrome에서는 음성 인식이 안 될 수 있어요. Safari를 권장해요."]);
+  else if (ios) rows.push([true, "iPhone에서 소리가 안 나면 무음 모드를 꺼 주세요."]);
+  rows.forEach(([ok, tx]) => { const d = el("div"); d.append(el("span", "dot " + (ok ? "y" : "n")), el("span", null, tx)); box.append(d); });
+  if (!Voice.canListen) { $("btnMic").disabled = true; $("micLab").firstChild.textContent = "키보드로 입력"; }
 })();
 
-/* 환자 정보 */
-function renderChart(host, openTl) {
+/* 모니터 카드 */
+function monitorCard(compact) {
+  const m = el("div", "monitor");
+  const h = el("div", "mon-head");
+  const nm = el("div"); nm.append(el("b", null, "심근식 · M/58"), el("div", null, "inferior STEMI · post-PCI"));
+  const lv = el("span", "live"); lv.append(el("i"), document.createTextNode("22:30"));
+  h.append(nm, lv); m.append(h);
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("viewBox", "0 0 300 34"); svg.setAttribute("preserveAspectRatio", "none"); svg.classList.add("ecg");
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  let d = "M0 20"; for (let x = 0; x < 300; x += 60) d += ` L${x + 18} 20 L${x + 22} 17 L${x + 26} 20 L${x + 30} 20 L${x + 32} 24 L${x + 35} 3 L${x + 38} 28 L${x + 41} 20 L${x + 48} 20 L${x + 53} 15 L${x + 58} 20 L${x + 60} 20`;
+  path.setAttribute("d", d); path.setAttribute("fill", "none"); path.setAttribute("stroke", "var(--hr)"); path.setAttribute("stroke-width", "2"); path.setAttribute("stroke-linejoin", "round");
+  svg.append(path); m.append(svg);
+  const g = el("div", "mon-grid");
+  [["hr","HR",MON.hr,"bpm"],["bp","NIBP",MON.bp,"mmHg"],["sp","SpO2",MON.sp,"% · O2 4 L"],["rr","RR",MON.rr,"/min"],["bt","BT",MON.bt,"℃"],["nrs","NRS",MON.nrs,"/10"]].forEach(([c, k, v, u]) => { const b = el("div", "mv " + c); b.append(el("div", "k", k), el("div", "v", v), el("div", "u", u)); g.append(b); });
+  m.append(g);
+  if (!compact) m.append(el("div", "mon-foot", "22:30 측정값은 가정입니다. sinus rhythm · arrhythmia 없음"));
+  return m;
+}
+
+/* 환자 차트 */
+const TABS = [["sum","요약"],["tl","경과"],["ord","처방"],["med","투약"],["lab","검사"],["nur","간호 수행"]];
+let chartTab = "sum";
+function renderChart(host, tabsHost, monitorHost) {
+  if (monitorHost) { monitorHost.replaceChildren(monitorCard(false)); }
+  tabsHost.replaceChildren();
+  TABS.forEach(([k, n]) => { const b = el("button", null, n); b.type = "button"; b.setAttribute("role", "tab"); b.setAttribute("aria-selected", k === chartTab); b.onclick = () => { chartTab = k; renderChart(host, tabsHost, null); }; tabsHost.append(b); });
   host.replaceChildren();
-  const c = el("div", "chart");
-  const h = el("div", "chart-head"); h.append(el("span", "pt", PATIENT.head), el("span", "small muted mono", "등록번호 " + PATIENT.reg)); c.append(h);
-  const d0 = el("dl", "kv"); [["진단명", PATIENT.dx], ["위치", PATIENT.loc], ["주치의", PATIENT.dr]].forEach(([k, v]) => d0.append(el("dt", null, k), el("dd", null, v))); c.append(d0);
-  const vh = el("h3", null, "22:30 활력징후 "); vh.append(el("span", "as", "가정")); c.append(vh);
-  const vg = el("div", "vitals"); PATIENT.vitals.forEach(([k, v, u]) => { const b = el("div", "vital"); b.append(el("div", "k", k), el("div", "v", v), el("div", "u", u)); vg.append(b); }); c.append(vg);
-  c.append(el("h3", null, "현재 상태"));
-  const d1 = el("dl", "kv"); PATIENT.now.forEach(([k, v, a]) => { const dd = el("dd", null, v); if (a) dd.append(el("span", "as", "가정")); d1.append(el("dt", null, k), dd); }); c.append(d1);
-  c.append(el("h3", null, "배경"));
-  const d2 = el("dl", "kv"); PATIENT.bg.forEach(([k, v]) => d2.append(el("dt", null, k), el("dd", null, v))); c.append(d2);
-  const det = el("details"); det.open = !!openTl; det.append(el("summary", null, "시간 경과"));
-  const tl = el("dl", "tl"); PATIENT.timeline.forEach(([t, v]) => tl.append(el("dt", null, t), el("dd", null, v))); det.append(tl); c.append(det);
-  c.append(el("p", "small muted", "‘가정’은 시나리오 문서에 없어 새로 설정한 값입니다. 시각은 모두 가정입니다."));
-  host.append(c);
+  if (chartTab === "sum") {
+    host.append(el("h2", null, "환자 요약"));
+    const dl = el("dl", "kv"); SUMMARY.forEach(([k, v, a]) => { const dd = el("dd", null, v); if (a) dd.append(el("span", "as", "가정")); dl.append(el("dt", null, k), dd); }); host.append(dl);
+  } else if (chartTab === "tl") {
+    host.append(el("h2", null, "오늘의 경과"));
+    const w = el("div", "tl");
+    TIMELINE.forEach(x => { const r = el("div", "tl-item" + (x.key ? " key" : "")); const tx = el("div", "tx"); const hb = el("b", null, x.h); if (x.as) hb.append(el("span", "as", "가정")); tx.append(hb, el("span", null, x.d));
+      if (x.v) { const vc = el("div", "vchips"); x.v.forEach(v => vc.append(el("span", null, v))); tx.append(vc); }
+      r.append(el("div", "tm", x.t), el("div", "ln"), tx); w.append(r); });
+    host.append(w, el("p", "xs sub", "시각은 모두 가정입니다."));
+  } else if (chartTab === "ord") {
+    host.append(el("h2", null, "의사 처방"));
+    const l = el("div", "olist");
+    ORDERS.forEach(([o, st, note]) => { const r = el("div", "oitem"); r.append(el("b", null, o), el("span", "st " + st, st === "done" ? "시행" : "미시행")); if (note) r.append(el("span", "note", note)); l.append(r); });
+    host.append(l);
+  } else if (chartTab === "med") {
+    host.append(el("h2", null, "투약 기록"));
+    const l = el("div", "olist");
+    MEDS.forEach(([tm, drug, pre, eff]) => { const r = el("div", "oitem"); const left = el("div"); left.append(el("b", null, drug)); r.append(left, el("span", "st " + (tm === "—" ? "wait" : "done"), tm === "—" ? "투여 전" : tm)); const n = [pre, eff].filter(Boolean).join(" · "); if (n) r.append(el("span", "note", n)); l.append(r); });
+    host.append(l, el("p", "xs sub", "투약 시각은 가정입니다. NTG 용량은 처방지 기준(0.4 mg)이며 시나리오 문서에 0.6 mg 표기도 있어요."));
+  } else if (chartTab === "lab") {
+    host.append(el("h2", null, "검사 결과"));
+    const wrap = el("div", "scroll-x"); const tb = el("table", "labs");
+    const th = el("tr"); ["항목","결과","참고치"].forEach(x => th.append(el("th", null, x))); tb.append(th);
+    LABS.forEach(r => { const tr = el("tr"); if (r.length === 1) { tr.className = "grp"; const td = el("td", null, r[0]); td.colSpan = 3; tr.append(td); } else { const v = el("td", "v", r[1]); if (r[3]) v.append(el("span", "flag", r[3])); tr.append(el("td", null, r[0]), v, el("td", "r", r[2])); } tb.append(tr); });
+    wrap.append(tb); host.append(wrap, el("p", "xs sub", "Troponin I 참고치는 시나리오 문서 표기를 그대로 옮겼어요(확인 필요)."));
+  } else {
+    host.append(el("h2", null, "간호 수행"));
+    NURSING.forEach(([h, list]) => { const g = el("div", "ngroup"); g.append(el("h4", null, h)); const ul = el("ul"); list.forEach(x => ul.append(el("li", null, x))); g.append(ul); host.append(g); });
+  }
 }
 
 /* 시트 */
 let opener = null;
-function openSheet(s) { opener = document.activeElement; $("scrim").hidden = false; s.hidden = false; s.querySelector("[data-close]").focus(); }
-function closeSheets() { $("scrim").hidden = true; $("sChart").hidden = true; $("sGloss").hidden = true; if (opener && opener.focus) opener.focus(); }
-$("scrim").onclick = closeSheets;
-document.querySelectorAll("[data-close]").forEach(b => b.onclick = closeSheets);
-document.addEventListener("keydown", e => { if (e.key === "Escape") closeSheets(); });
-$("btnChart").onclick = () => openSheet($("sChart"));
-$("btnGloss").onclick = () => { showList($("q").value); openSheet($("sGloss")); };
+function openSheet(title, fill) { opener = document.activeElement; $("sheetTitle").textContent = title; const b = $("sheetBody"); b.replaceChildren(); fill(b); $("scrim").hidden = false; $("sheet").hidden = false; b.scrollTop = 0; $("sheetClose").focus(); }
+function closeSheet() { $("scrim").hidden = true; $("sheet").hidden = true; if (opener && opener.focus) opener.focus(); }
+$("scrim").onclick = closeSheet; $("sheetClose").onclick = closeSheet;
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); });
+function openChartSheet() { openSheet("환자 차트", b => { const tabs = el("div", "tabs"), pane = el("div", "card"); b.append(monitorCard(true), tabs, pane); renderChart(pane, tabs, null); }); }
+$("btnMini").onclick = openChartSheet;
 
-/* 용어 사전 */
-function showList(q) {
-  const body = $("glossBody"); body.replaceChildren();
+/* 용어 */
+function termList(host, q, onPick) {
+  host.replaceChildren();
   const s = (q || "").trim().toLowerCase();
   const hits = TERMS.filter(t => !s || [t.en, t.ab, t.ko, t.full].some(x => (x || "").toLowerCase().includes(s))).sort((a, b) => a.en.localeCompare(b.en));
-  if (!hits.length) { body.append(el("p", "muted", "일치하는 용어가 없습니다. 이 장면에 쓰이는 용어만 들어 있습니다.")); return; }
-  const list = el("div", "term-list");
-  hits.forEach(t => { const b = el("button", "term-btn"); b.type = "button"; b.append(el("span", "en", t.ab ? t.en + " (" + t.ab.split(",")[0] + ")" : t.en), el("span", "ko", t.ko)); b.onclick = () => showTerm(t); list.append(b); });
-  body.append(el("p", "small muted", hits.length + "개 용어"), list);
+  if (!hits.length) { host.append(el("p", "sub", "일치하는 용어가 없어요.")); return; }
+  host.append(el("p", "xs sub", hits.length + "개 용어"));
+  const l = el("div", "tlist");
+  hits.forEach(t => { const b = el("button", "tbtn"); b.type = "button"; b.append(el("span", "en", t.ab ? t.en + " (" + t.ab.split(",")[0] + ")" : t.en), el("span", "ko", t.ko)); b.onclick = () => onPick(t); l.append(b); });
+  host.append(l);
 }
-function showTerm(t) {
-  const body = $("glossBody"); body.replaceChildren();
-  const w = el("div", "term"); w.style.cssText = "display:flex;flex-direction:column;gap:10px";
+function termDetail(host, t, back) {
+  host.replaceChildren();
+  const w = el("div", "term card");
   const top = el("div", "row");
-  const back = el("button", "btn sm", "← 목록"); back.type = "button"; back.onclick = () => showList($("q").value);
-  top.append(back);
+  if (back) { const bb = el("button", "btn sm ghost", "← 목록"); bb.type = "button"; bb.onclick = back; top.append(bb); }
   if (Voice.canSpeak) {
-    const say = el("button", "btn sm", "발음 듣기"); say.type = "button"; say.onclick = () => Voice.speak(t.en, "en-US", 0.9); top.append(say);
-    if (t.ab) { const sa = el("button", "btn sm", "약어 듣기"); sa.type = "button"; sa.onclick = () => Voice.speak(t.ab.split(",")[0], "en-US", 0.9); top.append(sa); }
+    const a = el("button", "btn sm", "영어 발음"); a.type = "button"; a.onclick = () => Voice.speak(t.en, "en-US", .9); top.append(a);
+    if (t.ab) { const ab = t.ab.split(",")[0].trim(); const b2 = el("button", "btn sm", "약어 읽기"); b2.type = "button"; b2.onclick = () => Voice.speak(READ_EN[ab] || ab, "en-US", .9); top.append(b2); }
   }
   w.append(top, el("h2", null, t.en));
-  const meta = el("div", "chips"); if (t.ab) meta.append(el("span", "tag", "약어 " + t.ab)); meta.append(el("span", "tag", t.typ), el("span", "tag", t.lv)); if (t.cand) meta.append(el("span", "as", "DB 추가 후보")); w.append(meta);
-  if (t.full) w.append(el("p", "small muted", t.full));
+  const meta = el("div", "row"); if (t.ab) meta.append(el("span", "tag", "약어 " + t.ab)); meta.append(el("span", "tag", t.typ), el("span", "tag", t.lv)); if (t.cand) meta.append(el("span", "as", "DB 추가 후보")); w.append(meta);
+  if (t.full) w.append(el("p", "sm sub", t.full));
   const ko = el("p", null, t.ko + " "); ko.append(el("span", "tag", "6.1판 대조 전")); w.append(ko);
-  w.append(el("p", "mono", t.ipa || "발음 표기 준비 중"));
-  if (t.comp.length) { w.append(el("h3", null, "구성 요소")); const cw = el("div", "comp"); t.comp.forEach(([f, k, m]) => { const s = el("span"); s.append(el("b", null, f), document.createTextNode(" " + m + " · " + k)); cw.append(s); }); w.append(cw); }
-  w.append(el("h3", null, "정의"), el("p", null, t.de), el("h3", null, "이 환자에서의 쓰임"), el("p", null, t.ctx), el("h3", null, "환자에게 설명할 때"), el("p", null, t.plain));
-  if (t.ex) { w.append(el("h3", null, "발화 예")); const qd = el("div", "quote", t.ex); w.append(qd); if (Voice.canSpeak) { const b = el("button", "btn sm", "발화 예 듣기"); b.type = "button"; b.style.alignSelf = "flex-start"; b.onclick = () => Voice.speak(t.ex, "ko-KR", opt.rate()); w.append(b); } }
+  w.append(el("p", "ipa", t.ipa || "발음 표기 준비 중"));
+  if (t.comp.length) { w.append(el("h3", null, "구성 요소")); const c = el("div", "comp"); t.comp.forEach(([f, k, m]) => { const s = el("span"); s.append(el("b", null, f), document.createTextNode(" " + m + " · " + k)); c.append(s); }); w.append(c); }
+  w.append(el("h3", null, "정의"), el("p", null, t.de), el("h3", null, "이 환자에서"), el("p", null, t.ctx), el("h3", null, "환자에게 설명할 때"), el("p", null, t.plain));
+  if (t.ex) { w.append(el("h3", null, "발화 예")); w.append(el("div", "quote", t.ex)); if (Voice.canSpeak) { const b = el("button", "btn sm", "발화 예 듣기"); b.type = "button"; b.style.alignSelf = "flex-start"; b.onclick = () => Voice.speak(t.ex, "ko-KR", rate()); w.append(b); } }
   const ps = PAIRS.filter(p => p.a === t.en || p.b === t.en);
-  if (ps.length) { w.append(el("h3", null, "헷갈리기 쉬운 용어")); ps.forEach(p => { const other = TERMS.find(x => x.en === (p.a === t.en ? p.b : p.a)); const q = el("div", "quote"); const b = el("button", "chip", other.en); b.type = "button"; b.onclick = () => showTerm(other); q.append(b, el("div", "small", p.point)); w.append(q); }); }
-  if (t.memo) w.append(el("p", "small muted", "검토 메모: " + t.memo));
-  body.append(w); body.parentElement.scrollTop = 0;
+  if (ps.length) { w.append(el("h3", null, "헷갈리기 쉬운 용어")); ps.forEach(p => { const o = TERMS.find(x => x.en === (p.a === t.en ? p.b : p.a)); const q = el("div", "quote"); const b = el("button", "chip", o.en); b.type = "button"; b.onclick = () => termDetail(host, o, back); q.append(b, el("div", "sm", p.point)); w.append(q); }); }
+  if (t.memo) w.append(el("p", "xs sub", "검토 메모: " + t.memo));
+  host.append(w);
 }
-$("q").oninput = e => showList(e.target.value);
-function openTerm(label) { const t = findTerm(label); if (!t) return; showTerm(t); openSheet($("sGloss")); }
+function showTermsView() { termList($("termBody"), $("q").value, t => { termDetail($("termBody"), t, () => showTermsView()); window.scrollTo(0, 0); }); }
+$("q").oninput = showTermsView;
+function openTermSheet(t) { openSheet("용어", b => termDetail(b, t, null)); }
+$("btnTermsQuick").onclick = () => openSheet("용어 사전", b => { const inp = el("input", "search"); inp.type = "search"; inp.placeholder = "영문, 약어, 한글로 검색"; const box = el("div"); const draw = () => termList(box, inp.value, t => termDetail(box, t, draw)); inp.oninput = draw; b.append(inp, box); draw(); });
 
-/* 대화 화면 */
+/* 모범 인계 */
+const MODEL_STAGES = [OPEN, ...STAGES];
+function renderModel() {
+  const l = $("modelList"); l.replaceChildren();
+  MODEL_STAGES.forEach(s => {
+    const c = el("button", "mcard"); c.type = "button"; c.dataset.k = s.k;
+    const lab = el("div", "l" + (s.k === "G" ? " w" : ""), s.l);
+    const body = el("div"); body.append(el("b", null, s.n + " · " + s.ko)); const tx = el("div", "tx", s.model); body.append(tx);
+    c.append(lab, body);
+    c.onclick = () => playModel(s.k);
+    l.append(c);
+  });
+}
+function playModel(k) {
+  if (!Voice.canSpeak) return;
+  Player.load(MODEL_STAGES, k, seg => {
+    document.querySelectorAll(".mcard").forEach(c => {
+      const on = seg && c.dataset.k === seg.k; c.classList.toggle("playing", on);
+      const tx = c.querySelector(".tx"); const s = MODEL_STAGES.find(x => x.k === c.dataset.k);
+      if (on) { const i = s.model.indexOf(seg.text); tx.replaceChildren(); if (i >= 0) { tx.append(document.createTextNode(s.model.slice(0, i)), el("mark", null, seg.text), document.createTextNode(s.model.slice(i + seg.text.length))); } else tx.textContent = s.model; }
+      else tx.textContent = s.model;
+    });
+    if (seg) { const card = document.querySelector('.mcard[data-k="' + seg.k + '"]'); if (card && !$("vModel").hidden) card.scrollIntoView({ block: "nearest", behavior: "smooth" }); }
+  });
+}
+$("btnPlayAll").onclick = () => playModel("G");
+$("plToggle").onclick = () => Player.toggle();
+$("plNext").onclick = () => Player.next();
+$("plPrev").onclick = () => Player.prev();
+$("plStop").onclick = () => Player.stop();
+
+/* ---------- 연습 ---------- */
+let level = "basic", log = [], covered = new Set(), current = "G", ended = false, lastFb = null;
+const MAX = 16;
+const myTurns = () => log.filter(m => m.role === "me").length;
+const HINTS = {
+  G: { t: "인사 · 인계 시작", d: "먼저 인사하고 근무조를 밝혀요.", say: "안녕하세요, 선생님. 이브닝 번 인계드리겠습니다." },
+  Q: { t: "마무리", d: "인계를 마치며 궁금한 점이 있는지 물어봐요.", say: "이상입니다. 혹시 궁금한 점 있으세요?" }
+};
 function renderSteps() {
-  const host = $("steps"); host.replaceChildren();
-  STAGES.forEach(s => { const d = el("div", "step" + (coveredSet.has(s.k) ? " done" : "") + (level === "basic" && s.k === current && !coveredSet.has(s.k) && !ended ? " now" : "")); d.append(el("div", "l", s.l), el("div", "n", s.n)); d.title = s.ko; host.append(d); });
+  const h = $("steps"); h.replaceChildren();
+  ALLSTAGES.forEach(s => { const wide = s.k === "G" || s.k === "Q"; const d = el("div", "step" + (wide ? " wide" : "") + (covered.has(s.k) ? " done" : "") + (s.k === current && !covered.has(s.k) && !ended && level === "basic" ? " now" : ""));
+    d.append(el("div", "l", s.l), el("div", "n", wide ? "" : s.n)); d.title = s.ko; h.append(d); });
   const hint = $("hint");
   if (level !== "basic" || ended) { hint.hidden = true; return; }
-  const s = STAGES.find(x => x.k === current) || STAGES[0];
   hint.hidden = false; hint.replaceChildren();
-  const head = el("div"); head.append(el("b", null, s.l + " · " + s.ko + "  "), el("span", "small", s.what));
-  const chips = el("div", "chips"); s.terms.forEach(tm => { const b = el("button", "chip", tm); b.type = "button"; b.onclick = () => openTerm(tm); chips.append(b); });
-  hint.append(head, chips);
+  if (HINTS[current]) { const x = HINTS[current]; const top = el("div"); top.append(el("b", null, x.t + "  "), el("span", "sm", x.d)); hint.append(top, el("div", "sm", "예: “" + x.say + "”")); return; }
+  const s = STAGES.find(x => x.k === current) || STAGES[0];
+  const top = el("div"); top.append(el("b", null, s.l + " · " + s.ko + "  "), el("span", "sm", s.what));
+  const chips = el("div", "chips"); s.terms.forEach(tm => { const b = el("button", "chip", tm); b.type = "button"; b.onclick = () => { const t = findTerm(tm); if (t) openTermSheet(t); }; chips.append(b); });
+  hint.append(top, chips);
 }
 function addMsg(role, text) {
   log.push({ role, text });
   const L = $("log");
-  if (role !== "sys") L.append(el("div", "who" + (role === "me" ? " me" : ""), role === "me" ? "나 (evening)" : "night 간호사"));
+  if (role !== "sys") { const w = el("div", "who" + (role === "me" ? " me" : "")); w.append(el("span", "av", role === "me" ? "E" : "N"), document.createTextNode(role === "me" ? "나 · 이브닝" : "나이트 간호사")); L.append(w); }
   const m = el("div", "msg " + role, text);
-  if (role === "ai" && Voice.canSpeak) { const r = el("button", "replay", "다시 듣기"); r.type = "button"; r.onclick = () => Voice.speak(text, "ko-KR", opt.rate()); m.append(document.createElement("br"), r); }
+  if (role === "ai" && Voice.canSpeak) { const r = el("button", "again", "▶ 다시 듣기"); r.type = "button"; r.onclick = () => Voice.speak(text, "ko-KR", rate()); m.append(document.createElement("br"), r); }
   L.append(m);
   requestAnimationFrame(() => m.scrollIntoView({ block: "end", behavior: "smooth" }));
-  return m;
 }
-function setCount() { $("count").textContent = myTurns() + " / " + MAX_TURNS; }
-function aiSay(text) { addMsg("ai", text); if (opt.speak()) return Voice.speak(text, "ko-KR", opt.rate()); return Promise.resolve(); }
+function aiSay(t) { addMsg("ai", t); if ($("optSpeak").checked) Voice.speak(t, "ko-KR", rate()); }
+function setCnt() { $("cnt").textContent = myTurns() + " / " + MAX; }
 
-function startChat() {
+$("btnStart").onclick = () => {
+  Player.stop();
   level = $("lvAdv").checked ? "adv" : "basic";
-  log = []; coveredSet = new Set(); current = "P"; ended = false; done = false; lastFb = null;
-  $("log").replaceChildren(); $("box").value = "";
-  show("vChat"); setCount();
-  addMsg("sys", "22:30 응급실 간호사실 · 교대 인수인계");
-  const first = Engine.start(level);
-  renderSteps();
-  aiSay(first);   /* 버튼을 누른 직후라 iPhone에서도 소리가 납니다 */
-}
-$("btnStart").onclick = startChat;
+  log = []; covered = new Set(); ended = false; lastFb = null; $("log").replaceChildren(); $("box").value = "";
+  Engine.start(level); current = "G";
+  show("vChat"); renderSteps(); setCnt();
+  addMsg("sys", "22:30 · 나이트 간호사가 출근했어요");
+  addMsg("sys", "먼저 인사하고 인계를 시작하세요");
+  if ($("optSpeak").checked) Voice.speak("나이트 간호사가 출근했어요. 먼저 인사하고 인계를 시작하세요.", "ko-KR", rate());  /* 버튼을 누른 직후라 iPhone에서도 소리가 납니다 */
+};
+$("btnBack").onclick = () => { if (Voice.listening) Voice.stop(); Voice.hush(); show("vHome"); };
 
 function send() {
-  const text = $("box").value.trim();
-  if (!text || ended) return;
+  const text = $("box").value.trim(); if (!text || ended) return;
   if (Voice.listening) Voice.stop();
-  $("box").value = "";
-  addMsg("me", text); setCount();
+  $("box").value = ""; addMsg("me", text); setCnt();
   const r = Engine.respond(text);
-  (r.covered || []).forEach(k => coveredSet.add(k));
-  if (r.current) current = r.current;
-  renderSteps();
+  (r.covered || []).forEach(k => covered.add(k)); if (r.current) current = r.current; renderSteps();
   setTimeout(() => {
     aiSay(r.reply);
-    if (r.done) { done = true; addMsg("sys", "인계가 끝났습니다. ‘마치기’를 눌러 피드백을 확인하세요."); }
-    else if (myTurns() >= MAX_TURNS) { addMsg("sys", "말하기 " + MAX_TURNS + "회를 모두 사용했습니다. 피드백으로 넘어갑니다."); setTimeout(finish, 1200); }
-  }, 350);
+    if (r.done) addMsg("sys", "인계가 끝났어요. ‘마치기’를 눌러 결과를 확인하세요.");
+    else if (myTurns() >= MAX) { addMsg("sys", "말하기 " + MAX + "회를 모두 썼어요. 결과로 넘어갈게요."); setTimeout(finish, 1500); }
+  }, 300);
 }
 $("btnSend").onclick = send;
 $("box").addEventListener("keydown", e => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); send(); } });
-
-/* 마이크 */
-function micUI(on) {
-  $("btnMic").classList.toggle("on", on);
-  $("btnMic").setAttribute("aria-label", on ? "말하기 끝내기" : "말하기 시작");
-  $("micLabel").firstChild.textContent = on ? "듣는 중… 다시 누르면 끝" : "눌러서 말하기";
-}
+function micUI(on) { $("btnMic").classList.toggle("on", on); $("btnMic").setAttribute("aria-label", on ? "말하기 끝내기" : "말하기 시작"); $("micLab").firstChild.textContent = on ? "듣는 중… 다시 누르면 끝" : "눌러서 말하기"; }
 $("btnMic").onclick = () => {
   if (ended) return;
   if (Voice.listening) { Voice.stop(); return; }
+  Player.stop();
   const before = $("box").value.trim();
-  const ok = Voice.start(
-    txt => { $("box").value = (before ? before + " " : "") + txt; },
-    (finalTxt, why) => {
-      micUI(false);
-      if (why === "not-allowed" || why === "service-not-allowed") addMsg("sys", "마이크 권한이 꺼져 있습니다. 브라우저 설정에서 이 사이트의 마이크를 허용하거나 키보드로 입력하세요.");
-      else if (why === "no-speech") addMsg("sys", "말소리가 들리지 않았습니다. 마이크를 누르고 다시 말해 주세요.");
-      else if (why === "network") addMsg("sys", "음성 인식에 인터넷 연결이 필요합니다. 연결을 확인해 주세요.");
-      if (opt.auto() && $("box").value.trim() && (why === "user" || why === "ended")) send();
-    }
-  );
-  if (ok) micUI(true); else addMsg("sys", "마이크를 시작하지 못했습니다. 키보드로 입력해 주세요.");
+  const ok = Voice.start(txt => { $("box").value = (before ? before + " " : "") + txt; }, (fin, why) => {
+    micUI(false);
+    if (why === "not-allowed" || why === "service-not-allowed") addMsg("sys", "마이크 권한이 꺼져 있어요. 브라우저 설정에서 이 사이트의 마이크를 허용하거나 키보드로 입력하세요.");
+    else if (why === "no-speech") addMsg("sys", "말소리가 들리지 않았어요. 마이크를 누르고 다시 말해 주세요.");
+    else if (why === "network") addMsg("sys", "음성 인식에 인터넷 연결이 필요해요.");
+    if ($("optAuto").checked && $("box").value.trim() && (why === "user" || why === "ended")) send();
+  });
+  if (ok) micUI(true); else addMsg("sys", "마이크를 시작하지 못했어요. 키보드로 입력해 주세요.");
 };
+$("btnEnd").onclick = finish;
 
-/* 피드백 */
-$("btnEnd").onclick = () => finish();
+/* ---------- 결과 ---------- */
 function finish() {
-  if (Voice.listening) Voice.stop();
-  Voice.stopSpeaking();
-  ended = true; renderSteps();
-  show("vFeed");
+  if (Voice.listening) Voice.stop(); Voice.hush();
+  ended = true; show("vFeed");
   lastFb = myTurns() ? Engine.feedback() : null;
   renderFeedback(lastFb);
 }
-const CHECK_ALL = CHECK;
-function renderFeedback(fb) {
-  const sum = $("fbSum"), ck = $("fbCheck"), ax = $("fbAxes"), tm = $("fbTerms");
-  [sum, ck, ax, tm].forEach(x => x.replaceChildren());
-  ck.hidden = ax.hidden = tm.hidden = !fb;
-  if (!fb) { sum.append(el("h2", null, "모범 발화"), el("p", null, "아래 모범 발화를 듣고 읽어 본 뒤 ‘다시 연습하기’로 직접 인계해 보세요.")); }
-  else {
-    const res = fb.checklist; const hit = CHECK_ALL.filter(c => res[c.id]).length;
-    sum.append(el("h2", null, "총평"));
-    const sc = el("div", "score"); const big = el("div", "big", String(hit)); big.append(el("small", null, " / " + CHECK_ALL.length + " 항목"));
-    const ov = el("p", null, fb.overall); ov.style.flex = "1 1 240px"; sc.append(big, ov); sum.append(sc);
-    if (fb.good.length) { sum.append(el("h3", null, "잘한 점")); const ul = el("ul", "list"); fb.good.forEach(g => ul.append(el("li", null, g))); sum.append(ul); }
-    sum.append(el("p", "small muted", "단어 일치 방식의 자동 판정입니다. 맞게 말해도 표현이 다르면 놓칠 수 있습니다."));
-
-    ck.append(el("h2", null, "PASS-BAR 완결성"));
-    const box = el("div", "ck");
-    STAGES.forEach(s => { const row = el("div", "ck-row"); row.append(el("div", "l", s.l)); const items = el("div", "ck-items");
-      CHECK_ALL.filter(c => c.stage === s.k).forEach(c => items.append(el("span", "ck-item " + (res[c.id] ? "y" : "n"), (res[c.id] ? "✓ " : "– ") + c.label)));
-      row.append(items); box.append(row); });
-    ck.append(box, el("p", "small muted", "✓ 말함   – 빠짐"));
-
-    ax.append(el("h2", null, "3축 피드백"));
-    const axis = (title, arr) => { ax.append(el("h3", null, title)); if (!arr.length) { ax.append(el("p", "muted small", "지적할 내용이 없습니다.")); return; }
-      const w = el("div", "fb"); arr.forEach(x => { const it = el("div", "fb-item"); if (x.said) it.append(el("div", "said", "내 표현  " + x.said)); it.append(el("div", null, x.issue)); const f = el("div"); f.append(el("b", null, "권장  "), document.createTextNode(x.better)); it.append(f); w.append(it); }); ax.append(w); };
-    axis("용어 정확성", fb.terms); axis("상황 적절성", fb.fit); axis("전문적 표현", fb.pro);
-
-    /* 용어 사용 */
-    const T = norm(log.filter(m => m.role === "me").map(m => m.text).join(" "));
-    const used = TERMS.filter(t => (SAY[t.en] || [t.en.toLowerCase()]).some(k => T.includes(norm(k))));
-    const keyTerms = [...new Set(STAGES.flatMap(s => s.terms))].map(findTerm).filter(Boolean);
-    const unused = keyTerms.filter(t => !used.includes(t));
-    tm.append(el("h2", null, "용어 사용"));
-    tm.append(el("h3", null, "내가 쓴 의학용어 " + used.length + "개"));
-    const c1 = el("div", "chips"); used.forEach(t => { const b = el("button", "chip", t.ab ? t.ab.split(",")[0] : t.en); b.type = "button"; b.onclick = () => { showTerm(t); openSheet($("sGloss")); }; c1.append(b); }); tm.append(used.length ? c1 : el("p", "muted small", "인식된 의학용어가 없습니다."));
-    tm.append(el("h3", null, "이 장면의 핵심 용어 중 쓰지 않은 것 " + unused.length + "개"));
-    const c2 = el("div", "chips"); unused.forEach(t => { const b = el("button", "chip", t.ab ? t.ab.split(",")[0] : t.en); b.type = "button"; b.onclick = () => { showTerm(t); openSheet($("sGloss")); }; c2.append(b); }); tm.append(c2);
-  }
-  const md = $("fbModel"); md.replaceChildren(el("h2", null, "단계별 모범 발화"));
-  if (Voice.canSpeak) { const all = el("button", "btn sm", "전체 듣기"); all.type = "button"; all.style.alignSelf = "flex-start"; all.onclick = async () => { for (const s of STAGES) { await Voice.speak(s.model, "ko-KR", opt.rate()); } }; md.append(all); }
-  STAGES.forEach(s => { const r = el("div", "model"); const b = el("div"); b.append(el("b", null, s.n + " · " + s.ko), el("div", null, s.model));
-    if (Voice.canSpeak) { const p = el("button", "replay", "듣기"); p.type = "button"; p.onclick = () => Voice.speak(s.model, "ko-KR", opt.rate()); b.append(p); }
-    r.append(el("div", "l", s.l), b); md.append(r); });
-  md.append(el("p", "small muted", "모범 발화의 수치는 시나리오 설정값이며 임상 지침이 아닙니다."));
-  const lg = $("fbLog"); lg.replaceChildren(); lg.hidden = !log.length;
-  if (log.length) { lg.append(el("h2", null, "내 대화 기록")); lg.append(el("div", "quote", transcript())); }
-  $("copyArea").hidden = true; $("copyState").textContent = "";
+function ring(hit, total) {
+  const ns = "http://www.w3.org/2000/svg", s = document.createElementNS(ns, "svg"); s.setAttribute("viewBox", "0 0 112 112"); s.classList.add("ring");
+  const r = 46, C = 2 * Math.PI * r;
+  const a = document.createElementNS(ns, "circle"); a.setAttribute("cx", 56); a.setAttribute("cy", 56); a.setAttribute("r", r); a.setAttribute("fill", "none"); a.setAttribute("stroke-width", 12); a.classList.add("bgc");
+  const b = document.createElementNS(ns, "circle"); b.setAttribute("cx", 56); b.setAttribute("cy", 56); b.setAttribute("r", r); b.setAttribute("fill", "none"); b.setAttribute("stroke-width", 12); b.setAttribute("stroke-linecap", "round"); b.setAttribute("stroke-dasharray", C); b.setAttribute("stroke-dashoffset", C * (1 - hit / total)); b.setAttribute("transform", "rotate(-90 56 56)"); b.classList.add("fgc");
+  const t = document.createElementNS(ns, "text"); t.setAttribute("x", 56); t.setAttribute("y", 58); t.setAttribute("text-anchor", "middle"); t.textContent = hit;
+  const t2 = document.createElementNS(ns, "text"); t2.setAttribute("x", 56); t2.setAttribute("y", 78); t2.setAttribute("text-anchor", "middle"); t2.classList.add("sm2"); t2.textContent = "/ " + total + " 항목";
+  s.append(a, b, t, t2); return s;
 }
-function transcript() { return log.filter(m => m.role !== "sys").map(m => (m.role === "me" ? "나: " : "night 간호사: ") + m.text).join("\n"); }
-$("btnAgain").onclick = () => { Voice.stopSpeaking(); show("vStart"); };
-$("btnModelOnly").onclick = () => { log = []; ended = true; lastFb = null; show("vFeed"); renderFeedback(null); };
+function renderFeedback(fb) {
+  const S = $("fbSum"), K = $("fbCheck"), A = $("fbAxes"), T = $("fbTerms"), L = $("fbLog");
+  [S, K, A, T, L].forEach(x => x.replaceChildren());
+  K.hidden = A.hidden = T.hidden = !fb; L.hidden = !log.length;
+  if (!fb) { S.append(el("h2", null, "말한 내용이 없어요"), el("p", null, "모범 인계를 들어 보고 다시 연습해 보세요.")); return; }
+  const res = fb.checklist, hit = CHECK.filter(c => res[c.id]).length;
+  S.append(el("h2", null, "총평"));
+  const sc = el("div", "score"); sc.append(ring(hit, CHECK.length), el("p", null, fb.overall)); S.append(sc);
+  if (fb.good.length) { S.append(el("h3", null, "잘한 점")); const ul = el("ul"); ul.style.cssText = "margin:0;padding-left:18px"; fb.good.forEach(g => ul.append(el("li", null, g))); S.append(ul); }
+  K.append(el("h2", null, "인계 체크리스트"));
+  const box = el("div", "ck");
+  ALLSTAGES.forEach(s => { const r = el("div", "ck-row"); r.append(el("div", "l" + (s.k === "G" || s.k === "Q" ? " w" : ""), s.l)); const it = el("div", "ck-items");
+    CHECK.filter(c => c.stage === s.k).forEach(c => it.append(el("span", "ck-item " + (res[c.id] ? "y" : "n"), (res[c.id] ? "✓ " : "– ") + c.label))); r.append(it); box.append(r); });
+  K.append(box, el("p", "xs sub", "✓ 말함   – 빠짐 · 단어 일치 방식이라 표현이 다르면 놓칠 수 있어요."));
+  A.append(el("h2", null, "3축 피드백"));
+  [["용어 정확성", fb.terms], ["상황 적절성", fb.fit], ["전문적 표현", fb.pro]].forEach(([n, arr]) => {
+    A.append(el("h3", null, n));
+    if (!arr.length) { A.append(el("p", "sm sub", "지적할 내용이 없어요.")); return; }
+    const w = el("div", "fb"); arr.forEach(x => { const i = el("div", "fb-item"); if (x.said) i.append(el("div", "said", "내 표현 · " + x.said)); i.append(el("div", null, x.issue)); const f = el("div"); f.append(el("span", "bt", "권장"), document.createTextNode(x.better)); i.append(f); w.append(i); }); A.append(w);
+  });
+  const TT = norm(log.filter(m => m.role === "me").map(m => m.text).join(" "));
+  const used = TERMS.filter(t => (SAY[t.en] || [t.en.toLowerCase()]).some(k => TT.includes(norm(k))));
+  const keys = [...new Set(STAGES.flatMap(s => s.terms))].map(findTerm).filter(Boolean), un = keys.filter(t => !used.includes(t));
+  T.append(el("h2", null, "용어 사용"), el("h3", null, "내가 쓴 의학용어 " + used.length + "개"));
+  const c1 = el("div", "chips"); used.forEach(t => { const b = el("button", "chip", t.ab ? t.ab.split(",")[0] : t.en); b.type = "button"; b.onclick = () => openTermSheet(t); c1.append(b); }); T.append(used.length ? c1 : el("p", "sm sub", "인식된 의학용어가 없어요."));
+  T.append(el("h3", null, "핵심 용어 중 쓰지 않은 것 " + un.length + "개"));
+  const c2 = el("div", "chips"); un.forEach(t => { const b = el("button", "chip", t.ab ? t.ab.split(",")[0] : t.en); b.type = "button"; b.onclick = () => openTermSheet(t); c2.append(b); }); T.append(c2);
+  L.append(el("h2", null, "내 대화 기록"), el("div", "quote", transcript()));
+}
+function transcript() { return log.filter(m => m.role !== "sys").map(m => (m.role === "me" ? "나: " : "나이트: ") + m.text).join("\n"); }
+$("btnAgain").onclick = () => show("vHome");
 $("btnCopy").onclick = async () => {
   const L = ["[MediTalk-N 인수인계 연습 결과]", "난이도: " + (level === "basic" ? "기본" : "심화")];
-  if (lastFb) { const res = lastFb.checklist; L.push("완결성: " + CHECK_ALL.filter(c => res[c.id]).length + " / " + CHECK_ALL.length); L.push("빠진 항목: " + (CHECK_ALL.filter(c => !res[c.id]).map(c => c.stage.replace(/\d/, "") + " " + c.label).join(", ") || "없음")); L.push("총평: " + lastFb.overall); }
+  if (lastFb) { const r = lastFb.checklist; L.push("체크리스트: " + CHECK.filter(c => r[c.id]).length + " / " + CHECK.length, "빠진 항목: " + (CHECK.filter(c => !r[c.id]).map(c => c.label).join(", ") || "없음"), "총평: " + lastFb.overall); }
   L.push("", "[대화]", transcript() || "(대화 없음)");
   const text = L.join("\n");
-  try { await navigator.clipboard.writeText(text); $("copyState").textContent = "복사했습니다."; }
+  try { await navigator.clipboard.writeText(text); $("copyState").textContent = "복사했어요."; }
   catch (_) { const a = $("copyArea"); a.hidden = false; a.value = text; a.focus(); a.select(); $("copyState").textContent = "아래 내용을 길게 눌러 복사하세요."; }
 };
 
+document.querySelectorAll('.seg input').forEach(i => i.addEventListener('change', () => document.querySelectorAll('.seg label').forEach(l => l.classList.toggle('on', l.querySelector('input').checked))));
+document.querySelectorAll('.seg label').forEach(l => l.classList.toggle('on', l.querySelector('input').checked));
 /* 시작 */
-renderChart($("chartStart"), false); renderChart($("chartSheet"), true); showList("");
+renderChart($("chartPane"), $("chartTabs"), $("monitorBox"));
+renderModel(); showTermsView(); show("vHome");
 </script>
 </body>
 </html>
